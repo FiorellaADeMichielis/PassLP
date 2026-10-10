@@ -6,7 +6,7 @@ import { Spacing } from '@/constants/theme';
 const FOOTER_BG = '#332F2B';
 const FOOTER_TEXT = '#CCCCCC';
 const FOOTER_TEXT_MUTED = '#888888';
-const LOGO_TEXT_COLOR = '#FFFFFF';
+const LOGO_TEXT_COLOR = '#F77F00';
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 

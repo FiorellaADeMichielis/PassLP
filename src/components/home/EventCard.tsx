@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
@@ -13,6 +13,10 @@ const CATEGORY_COLOR = '#999999';
 const BUY_BTN_BG = '#E85D04';
 const BUY_BTN_TEXT = '#FFFFFF';
 const SHADOW_COLOR = '#000000';
+
+// ─── Icono de ubicación en formato SVG vectorial ──────────────────────────────
+const PIN_ICON_SVG =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%23666666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface EventCardProps {
@@ -41,7 +45,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
     if (onPress) {
       onPress();
     } else {
-      router.push(`/event/${event.id}` as `/${string}`);
+      router.push(`/event/${event.id}` as unknown as Href);
     }
   }
 
@@ -73,9 +77,17 @@ export function EventCard({ event, onPress }: EventCardProps) {
         </Text>
 
         {/* Lugar */}
-        <Text style={styles.venue} numberOfLines={1}>
-          📍 {event.venue.name}, {event.venue.city}
-        </Text>
+        <View style={styles.venueRow}>
+          <Image
+            source={{ uri: PIN_ICON_SVG }}
+            style={styles.pinIcon}
+            contentFit="contain"
+            accessibilityLabel="Icono de ubicación"
+          />
+          <Text style={styles.venue} numberOfLines={1}>
+            {event.venue.name}, {event.venue.city}
+          </Text>
+        </View>
 
         {/* Precio base y botón Comprar */}
         <View style={styles.footer}>
@@ -149,10 +161,21 @@ const styles = StyleSheet.create({
     color: SECONDARY_COLOR,
     marginTop: Spacing.one,
   },
+  venueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  pinIcon: {
+    width: 11,
+    height: 11,
+    flexShrink: 0,
+  },
   venue: {
     fontSize: 11,
     color: SECONDARY_COLOR,
-    marginTop: 2,
+    flex: 1,
   },
   footer: {
     flexDirection: 'row',

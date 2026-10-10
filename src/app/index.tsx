@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,6 +39,7 @@ export default function HomeScreen() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [featuredEvents, setFeaturedEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   // ── Carga inicial: categorías y eventos destacados ─────────────────────────
   useEffect(() => {
@@ -84,6 +86,22 @@ export default function HomeScreen() {
     setSearchQuery(text);
   }
 
+  async function handleRefresh() {
+    setRefreshing(true);
+    const [cats, featured, evts] = await Promise.all([
+      eventsService.getCategories(),
+      eventsService.getFeaturedEvents(),
+      eventsService.getEvents(
+        selectedCategory === 'Todas' ? undefined : selectedCategory,
+        searchQuery.trim() || undefined,
+      ),
+    ]);
+    setCategories(cats);
+    setFeaturedEvents(featured);
+    setEvents(evts);
+    setRefreshing(false);
+  }
+
   // ── Render helpers ─────────────────────────────────────────────────────────
 
   function renderEventItem({ item }: { item: EventItem }) {
@@ -116,6 +134,14 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#F77F00']}
+            tintColor="#F77F00"
+          />
+        }
       >
         {/* Carrusel de destacados */}
         {featuredEvents.length > 0 && (

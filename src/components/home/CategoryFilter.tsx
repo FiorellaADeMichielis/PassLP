@@ -32,6 +32,12 @@ interface CategoryFilterProps {
 export function CategoryFilter({ categories, selected, onSelect }: CategoryFilterProps) {
   return (
     <View style={styles.wrapper}>
+      {/* Título de sección con línea */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Categorías</Text>
+        <View style={styles.line} />
+      </View>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -65,6 +71,21 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
 const styles = StyleSheet.create({
   wrapper: {
     paddingVertical: Spacing.two,
+  },
+  header: {
+    paddingHorizontal: Spacing.three,
+    marginBottom: Spacing.two,
+    gap: Spacing.one,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginTop: 4,
   },
   scrollContent: {
     flexDirection: 'row',
