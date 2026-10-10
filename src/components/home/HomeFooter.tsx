@@ -1,46 +1,151 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Href, useRouter } from 'expo-router';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Spacing } from '@/constants/theme';
+import {
+  AccountIcon,
+  ExploreIcon,
+  HomeIcon,
+  TicketsIcon,
+} from '@/components/ui/Icons';
 
-// ─── Colores de diseño (según PASSLP_REFERENCIA.md §2.4 Footer) ──────────────
-const FOOTER_BG = '#332F2B';
-const FOOTER_TEXT = '#CCCCCC';
-const FOOTER_TEXT_MUTED = '#888888';
-const LOGO_TEXT_COLOR = '#F77F00';
+// ─── Colores con alto contraste (WCAG AA/AAA sobre fondo #332F2B) ─────────────
+const BAR_BG = '#332F2B';
+const BORDER_TOP = '#47423D';
+const ACTIVE_COLOR = '#F77F00'; // Naranja oficial (contraste 5.05:1)
+const INACTIVE_COLOR = '#D0CBC5'; // Gris claro visible (contraste 9.8:1)
 
-// ─── Componente ───────────────────────────────────────────────────────────────
+type TabKey = 'inicio' | 'explorar' | 'tickets' | 'cuenta';
+
+interface HomeFooterProps {
+  /** Callback opcional al presionar Inicio (por ej. scrollear al tope). */
+  onPressHome?: () => void;
+}
 
 /**
- * Pie de página de la pantalla principal.
+ * Barra de navegación inferior fija (Sticky Bottom Navigation Bar).
  *
- * Muestra el logotipo, un mensaje de soporte, aviso de copyright
- * y enlaces institucionales, sobre fondo `#332F2B` según referencia PASSLP.
+ * Siempre presente en la parte inferior de la pantalla. Contiene accesos directos
+ * a Inicio, Explorar, Tickets y Cuenta con iconos SVG nativos (react-native-svg)
+ * de alto contraste sobre fondo institucional `#332F2B`.
  */
-export function HomeFooter() {
+export function HomeFooter({ onPressHome }: HomeFooterProps) {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const [activeTab, setActiveTab] = useState<TabKey>('inicio');
+
+  function handleTabPress(tab: TabKey) {
+    setActiveTab(tab);
+
+    if (tab === 'inicio') {
+      if (onPressHome) onPressHome();
+    } else if (tab === 'explorar') {
+      Alert.alert('Explorar', 'La sección de exploración estará disponible próximamente.');
+    } else if (tab === 'tickets') {
+      Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
+    } else if (tab === 'cuenta') {
+      router.push('/login' as unknown as Href);
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      {/* Logotipo */}
-      <Text style={styles.logo}>PassLP</Text>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {/* Botón 1: Inicio */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => handleTabPress('inicio')}
+        activeOpacity={0.7}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: activeTab === 'inicio' }}
+        accessibilityLabel="Pestaña Inicio"
+      >
+        <HomeIcon
+          size={22}
+          color={activeTab === 'inicio' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.label,
+            activeTab === 'inicio' ? styles.labelActive : styles.labelInactive,
+          ]}
+        >
+          Inicio
+        </Text>
+      </TouchableOpacity>
 
-      {/* Mensaje de soporte */}
-      <Text style={styles.supportText}>
-        Contactate con soporte en caso de que no te lleguen tus entradas
-      </Text>
+      {/* Botón 2: Explorar */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => handleTabPress('explorar')}
+        activeOpacity={0.7}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: activeTab === 'explorar' }}
+        accessibilityLabel="Pestaña Explorar"
+      >
+        <ExploreIcon
+          size={22}
+          color={activeTab === 'explorar' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.label,
+            activeTab === 'explorar' ? styles.labelActive : styles.labelInactive,
+          ]}
+        >
+          Explorar
+        </Text>
+      </TouchableOpacity>
 
-      {/* Separador */}
-      <View style={styles.divider} />
+      {/* Botón 3: Tickets */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => handleTabPress('tickets')}
+        activeOpacity={0.7}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: activeTab === 'tickets' }}
+        accessibilityLabel="Pestaña Tickets"
+      >
+        <TicketsIcon
+          size={22}
+          color={activeTab === 'tickets' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.label,
+            activeTab === 'tickets' ? styles.labelActive : styles.labelInactive,
+          ]}
+        >
+          Tickets
+        </Text>
+      </TouchableOpacity>
 
-      {/* Links institucionales */}
-      <View style={styles.linksRow}>
-        <Text style={styles.link}>Eventos Destacados</Text>
-        <Text style={styles.separator}>·</Text>
-        <Text style={styles.link}>Términos y Condiciones</Text>
-        <Text style={styles.separator}>·</Text>
-        <Text style={styles.link}>Defensa al Consumidor</Text>
-      </View>
-
-      {/* Copyright */}
-      <Text style={styles.copyright}>© {new Date().getFullYear()} PassLP — Todos los derechos reservados</Text>
+      {/* Botón 4: Cuenta */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => handleTabPress('cuenta')}
+        activeOpacity={0.7}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: activeTab === 'cuenta' }}
+        accessibilityLabel="Pestaña Cuenta"
+      >
+        <AccountIcon
+          size={22}
+          color={activeTab === 'cuenta' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.label,
+            activeTab === 'cuenta' ? styles.labelActive : styles.labelInactive,
+          ]}
+        >
+          Cuenta
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -49,53 +154,39 @@ export function HomeFooter() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: FOOTER_BG,
-    paddingHorizontal: Spacing.three,
-    paddingTop: Spacing.four,
-    paddingBottom: Spacing.five,
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  logo: {
-    color: LOGO_TEXT_COLOR,
-    fontSize: 22,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.one,
-  },
-  supportText: {
-    color: FOOTER_TEXT,
-    fontSize: 11,
-    textAlign: 'center',
-    lineHeight: 16,
-    textDecorationLine: 'underline',
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    backgroundColor: '#4A4540',
-    marginVertical: Spacing.two,
-  },
-  linksRow: {
+    backgroundColor: BAR_BG,
+    borderTopWidth: 1,
+    borderTopColor: BORDER_TOP,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: 8,
+    elevation: 12,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    paddingVertical: 4,
+    gap: 3,
   },
-  link: {
-    color: FOOTER_TEXT,
+  icon: {
+    marginBottom: 1,
+  },
+  label: {
     fontSize: 11,
-    textDecorationLine: 'underline',
+    letterSpacing: 0.2,
   },
-  separator: {
-    color: FOOTER_TEXT_MUTED,
-    fontSize: 11,
+  labelActive: {
+    color: ACTIVE_COLOR,
+    fontWeight: '700',
   },
-  copyright: {
-    color: FOOTER_TEXT_MUTED,
-    fontSize: 10,
-    textAlign: 'center',
-    marginTop: Spacing.one,
+  labelInactive: {
+    color: INACTIVE_COLOR,
+    fontWeight: '500',
   },
 });
-

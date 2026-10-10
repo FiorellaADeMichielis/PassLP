@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
 import { Href, useRouter } from 'expo-router';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { SearchIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 
 // ─── Colores de diseño (según PASSLP_REFERENCIA.md §2.1 y §9.1) ─────────────
@@ -12,10 +12,6 @@ const SEARCH_TEXT = '#1A1A1A';
 const BTN_INGRESAR_BG = '#000000';
 const BTN_INGRESAR_TEXT = '#FFFFFF';
 const LOGO_TEXT_COLOR = '#F77F00'; // Naranja corporativo PASSLP
-
-// ─── Icono de búsqueda en formato SVG vectorial ──────────────────────────────
-const SEARCH_ICON_SVG =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999999" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface HomeHeaderProps {
@@ -31,7 +27,7 @@ interface HomeHeaderProps {
  * Cabecera de la pantalla principal.
  *
  * Contiene (de izquierda a derecha): logotipo en naranja institucional, buscador en píldora blanca
- * con icono SVG vectorial y botón "Ingresar" en píldora negra.
+ * con icono SVG vectorial nativo (react-native-svg) y botón "Ingresar" en píldora negra.
  * Fondo oscuro `#332F2B` según referencia PASSLP.
  */
 export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
@@ -46,12 +42,7 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
 
       {/* Buscador */}
       <View style={styles.searchWrapper}>
-        <Image
-          source={{ uri: SEARCH_ICON_SVG }}
-          style={styles.searchIcon}
-          contentFit="contain"
-          accessibilityLabel="Icono de lupa"
-        />
+        <SearchIcon size={15} color="#332F2B" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           value={searchQuery}

@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { Href, useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { PinIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { EventItem } from '@/types';
 
@@ -13,10 +14,6 @@ const CATEGORY_COLOR = '#999999';
 const BUY_BTN_BG = '#E85D04';
 const BUY_BTN_TEXT = '#FFFFFF';
 const SHADOW_COLOR = '#000000';
-
-// ─── Icono de ubicación en formato SVG vectorial ──────────────────────────────
-const PIN_ICON_SVG =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%23666666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface EventCardProps {
@@ -78,12 +75,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
 
         {/* Lugar */}
         <View style={styles.venueRow}>
-          <Image
-            source={{ uri: PIN_ICON_SVG }}
-            style={styles.pinIcon}
-            contentFit="contain"
-            accessibilityLabel="Icono de ubicación"
-          />
+          <PinIcon size={13} color="#E85D04" style={styles.pinIcon} />
           <Text style={styles.venue} numberOfLines={1}>
             {event.venue.name}, {event.venue.city}
           </Text>

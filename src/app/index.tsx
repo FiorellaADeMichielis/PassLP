@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const [featuredEvents, setFeaturedEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
 
   // ── Carga inicial: categorías y eventos destacados ─────────────────────────
   useEffect(() => {
@@ -130,6 +131,7 @@ export default function HomeScreen() {
       <HomeHeader searchQuery={searchQuery} onSearchChange={handleSearchChange} />
 
       <ScrollView
+        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -178,10 +180,12 @@ export default function HomeScreen() {
             contentContainerStyle={styles.grid}
           />
         )}
-
-        {/* Footer */}
-        <HomeFooter />
       </ScrollView>
+
+      {/* Barra de navegación inferior fija (Sticky Bottom Tab Bar) */}
+      <HomeFooter
+        onPressHome={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
+      />
     </SafeAreaView>
   );
 }
@@ -209,7 +213,7 @@ const styles = StyleSheet.create({
   },
   grid: {
     paddingHorizontal: 12,
-    paddingBottom: 16,
+    paddingBottom: 28,
   },
   row: {
     gap: 12,
