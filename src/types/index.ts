@@ -1,13 +1,15 @@
 export type EventCategory =
   | 'Todas'
+  | 'Actividades'
+  | 'Bares'
+  | 'Cenas'
   | 'Cine'
-  | 'Conferencias'
   | 'Discotecas'
-  | 'Evento Deportivo'
-  | 'Eventos'
+  | 'Eventos deportivos'
   | 'Fiestas'
-  | 'Fiestas Electrónicas'
+  | 'Recepciones'
   | 'Recitales'
+  | 'Sessions'
   | 'Teatro';
 
 export type VehicleType = 'Sedán' | 'Pickup' | 'Moto' | 'SUV';
@@ -114,3 +116,4 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
 }
+
