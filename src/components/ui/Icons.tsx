@@ -337,3 +337,131 @@ export function PlusIcon({
   );
 }
 
+/** Icono de tilde de verificación (Checkmark). */
+export function CheckIcon({
+  size = 14,
+  color = '#FFFFFF',
+  strokeWidth = 2.6,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Polyline points="20 6 9 17 4 12" />
+    </Svg>
+  );
+}
+
+/** Icono de cronómetro / temporizador. */
+export function TimerIcon({
+  size = 14,
+  color = '#54C1C3',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Circle cx="12" cy="13" r="8" />
+      <Line x1="12" y1="9" x2="12" y2="13" />
+      <Line x1="12" y1="13" x2="15" y2="15" />
+      <Line x1="10" y1="2" x2="14" y2="2" />
+    </Svg>
+  );
+}
+
+/** Icono de advertencia circular. */
+export function AlertCircleIcon({
+  size = 16,
+  color = '#E63946',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Circle cx="12" cy="12" r="10" />
+      <Line x1="12" y1="8" x2="12" y2="12" />
+      <Line x1="12" y1="16" x2="12.01" y2="16" />
+    </Svg>
+  );
+}
+
+/** Icono de tarjeta de crédito para simulación de pago. */
+export function CreditCardIcon({
+  size = 18,
+  color = '#332F2B',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Rect x="2" y="5" width="20" height="14" rx="2" />
+      <Line x1="2" y1="10" x2="22" y2="10" />
+    </Svg>
+  );
+}
+
+/** Icono de escudo de seguridad para pago seguro. */
+export function ShieldCheckIcon({
+  size = 18,
+  color = '#1B9F00',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <Polyline points="9 12 11 14 15 10" />
+    </Svg>
+  );
+}
+
+
