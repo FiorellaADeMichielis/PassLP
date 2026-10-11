@@ -47,16 +47,24 @@ export function ParkingSection({
   const currentPrice = currentOption ? currentOption.price : 10000;
 
   function handleAdd() {
-    const cleanPlate = plate.trim().toUpperCase();
+    const cleanPlate = plate.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     const cleanModel = model.trim();
 
     if (!cleanPlate) {
-      Alert.alert('Datos requeridos', 'Por favor ingresa la patente del vehículo.');
+      Alert.alert('Datos requeridos', 'Por favor ingresá la patente del vehículo.');
       return;
     }
 
-    if (!cleanModel) {
-      Alert.alert('Datos requeridos', 'Por favor ingresa el modelo del vehículo.');
+    if (cleanPlate.length < 6 || cleanPlate.length > 7) {
+      Alert.alert(
+        'Patente no válida',
+        'La patente debe tener 6 o 7 caracteres alfanuméricos (ej. AB123CD o ABC123).'
+      );
+      return;
+    }
+
+    if (!cleanModel || cleanModel.length < 2) {
+      Alert.alert('Datos requeridos', 'Por favor ingresá el modelo del vehículo (mín. 2 caracteres).');
       return;
     }
 
