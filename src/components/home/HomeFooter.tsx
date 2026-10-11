@@ -36,13 +36,14 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
 
   function handleTabPress(tab: TabKey) {
-    setActiveTab(tab);
-
     if (tab === 'inicio') {
+      setActiveTab('inicio');
       if (onPressHome) onPressHome();
     } else if (tab === 'explorar') {
+      setActiveTab('inicio');
       Alert.alert('Explorar', 'La sección de exploración estará disponible próximamente.');
     } else if (tab === 'tickets') {
+      setActiveTab('inicio');
       Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
     } else if (tab === 'cuenta') {
       router.push('/login' as unknown as Href);

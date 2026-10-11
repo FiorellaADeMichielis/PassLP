@@ -12,7 +12,7 @@ export type EventCategory =
   | 'Sessions'
   | 'Teatro';
 
-export type VehicleType = 'Sedán' | 'Pickup' | 'Moto' | 'SUV';
+export type VehicleType = 'Sedán' | 'Pickup';
 
 export interface Venue {
   name: string;

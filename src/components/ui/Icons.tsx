@@ -166,3 +166,174 @@ export function AccountIcon({
   );
 }
 
+/** Icono de flecha atrás / volver. */
+export function ChevronLeftIcon({
+  size = 20,
+  color = '#FFFFFF',
+  strokeWidth = 2.4,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Polyline points="15 18 9 12 15 6" />
+    </Svg>
+  );
+}
+
+/** Icono de calendario para fecha. */
+export function CalendarIcon({
+  size = 14,
+  color = '#FFFFFF',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <Line x1="16" y1="2" x2="16" y2="6" />
+      <Line x1="8" y1="2" x2="8" y2="6" />
+      <Line x1="3" y1="10" x2="21" y2="10" />
+    </Svg>
+  );
+}
+
+/** Icono de reloj para hora del evento. */
+export function ClockIcon({
+  size = 14,
+  color = '#FFFFFF',
+  strokeWidth = 2.2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Circle cx="12" cy="12" r="10" />
+      <Polyline points="12 6 12 12 16 14" />
+    </Svg>
+  );
+}
+
+/** Icono circular "E" de estacionamiento. */
+export function ParkingBadgeIcon({
+  size = 18,
+  color = '#0D4F9C',
+  ...props
+}: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Circle cx="12" cy="12" r="11" fill={color} />
+      <Path
+        d="M9 7h4a3 3 0 0 1 0 6H9V7zm0 6h4"
+        stroke="#FFFFFF"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Line x1="9" y1="7" x2="9" y2="17" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+/** Icono de papelera para eliminar vehículos del estacionamiento. */
+export function TrashIcon({
+  size = 16,
+  color = '#E63946',
+  strokeWidth = 2,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Polyline points="3 6 5 6 21 6" />
+      <Path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </Svg>
+  );
+}
+
+/** Icono de signo menos para selector numérico. */
+export function MinusIcon({
+  size = 12,
+  color = '#FFFFFF',
+  strokeWidth = 2.6,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Line x1="5" y1="12" x2="19" y2="12" />
+    </Svg>
+  );
+}
+
+/** Icono de signo más para selector numérico. */
+export function PlusIcon({
+  size = 12,
+  color = '#FFFFFF',
+  strokeWidth = 2.6,
+  ...props
+}: IconProps) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <Line x1="12" y1="5" x2="12" y2="19" />
+      <Line x1="5" y1="12" x2="19" y2="12" />
+    </Svg>
+  );
+}
+

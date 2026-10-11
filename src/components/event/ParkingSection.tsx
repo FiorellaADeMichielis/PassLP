@@ -1,0 +1,425 @@
+import { useState } from 'react';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import { ParkingBadgeIcon, TrashIcon } from '@/components/ui/Icons';
+import { Spacing } from '@/constants/theme';
+import { ParkingOption, ParkingVehicle, VehicleType } from '@/types';
+
+interface ParkingSectionProps {
+  /** Opciones de tarifas de estacionamiento del evento. */
+  options: ParkingOption[];
+  /** Vehículos ya agregados por el usuario. */
+  addedVehicles: ParkingVehicle[];
+  /** Callback para agregar un nuevo vehículo. */
+  onAddVehicle: (vehicle: ParkingVehicle) => void;
+  /** Callback para remover un vehículo agregado. */
+  onRemoveVehicle: (id: string) => void;
+}
+
+const VEHICLE_TYPES: VehicleType[] = ['Sedán', 'Pickup'];
+
+/**
+ * Sección interactiva de estacionamiento según especificación PASSLP §4.
+ *
+ * Permite desplegar opciones de parking, ingresar patente y modelo de vehículo,
+ * y gestionar la lista dinámica de vehículos agregados a la orden.
+ */
+export function ParkingSection({
+  options,
+  addedVehicles,
+  onAddVehicle,
+  onRemoveVehicle,
+}: ParkingSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedType, setSelectedType] = useState<VehicleType>('Sedán');
+  const [plate, setPlate] = useState('');
+  const [model, setModel] = useState('');
+
+  // Encuentra la tarifa para el tipo seleccionado o valor por defecto
+  const currentOption = options.find((opt) => opt.vehicleType === selectedType);
+  const currentPrice = currentOption ? currentOption.price : 10000;
+
+  function handleAdd() {
+    const cleanPlate = plate.trim().toUpperCase();
+    const cleanModel = model.trim();
+
+    if (!cleanPlate) {
+      Alert.alert('Datos requeridos', 'Por favor ingresa la patente del vehículo.');
+      return;
+    }
+
+    if (!cleanModel) {
+      Alert.alert('Datos requeridos', 'Por favor ingresa el modelo del vehículo.');
+      return;
+    }
+
+    const newVehicle: ParkingVehicle = {
+      id: `pkg-${cleanPlate}-${addedVehicles.length + 1}`,
+      vehicleType: selectedType,
+      plate: cleanPlate,
+      model: cleanModel,
+      price: currentPrice,
+    };
+
+    onAddVehicle(newVehicle);
+    setPlate('');
+    setModel('');
+  }
+
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      maximumFractionDigits: 0,
+    })
+      .format(price)
+      .replace('ARS', '$')
+      .trim();
+
+  return (
+    <View style={styles.container}>
+      {/* Botón de apertura / despliegue */}
+      <TouchableOpacity
+        style={[styles.toggleBtn, isExpanded && styles.toggleBtnActive]}
+        onPress={() => setIsExpanded(!isExpanded)}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Desplegar opciones de estacionamiento"
+      >
+        <View style={styles.toggleLeft}>
+          <ParkingBadgeIcon size={20} color="#0D4F9C" />
+          <Text style={styles.toggleTitle}>Comprar estacionamiento</Text>
+        </View>
+        <Text style={styles.toggleChevron}>{isExpanded ? '▲' : '▼'}</Text>
+      </TouchableOpacity>
+
+      {/* Contenido desplegable */}
+      {isExpanded && (
+        <View style={styles.expandedContent}>
+          {/* Tarifas de referencia */}
+          <View style={styles.ratesBox}>
+            <Text style={styles.ratesTitle}>Tarifas disponibles:</Text>
+            <View style={styles.ratesRow}>
+              {options.map((opt) => (
+                <View key={opt.id} style={styles.ratePill}>
+                  <Text style={styles.rateType}>{opt.vehicleType}:</Text>
+                  <Text style={styles.ratePrice}>{formatPrice(opt.price)}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Formulario para agregar vehículo */}
+          <View style={styles.formBox}>
+            <Text style={styles.formSectionTitle}>DATOS DEL VEHÍCULO</Text>
+
+            {/* Selector de Tipo de Vehículo */}
+            <Text style={styles.inputLabel}>TIPO DE VEHÍCULO</Text>
+            <View style={styles.typeSelectorRow}>
+              {VEHICLE_TYPES.map((type) => {
+                const isSelected = type === selectedType;
+                return (
+                  <TouchableOpacity
+                    key={type}
+                    style={[styles.typeChip, isSelected && styles.typeChipSelected]}
+                    onPress={() => setSelectedType(type)}
+                  >
+                    <Text
+                      style={[
+                        styles.typeChipText,
+                        isSelected && styles.typeChipTextSelected,
+                      ]}
+                    >
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Input Patente */}
+            <Text style={styles.inputLabel}>PATENTE</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ej. AB123CD o ABC123"
+              placeholderTextColor="#999999"
+              value={plate}
+              onChangeText={setPlate}
+              autoCapitalize="characters"
+            />
+
+            {/* Input Modelo */}
+            <Text style={styles.inputLabel}>MODELO</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ej. Toyota Hilux, Peugeot 208"
+              placeholderTextColor="#999999"
+              value={model}
+              onChangeText={setModel}
+            />
+
+            {/* Resumen del precio del vehículo y botón agregar */}
+            <View style={styles.actionRow}>
+              <View>
+                <Text style={styles.priceLabel}>Precio del pase:</Text>
+                <Text style={styles.priceValue}>{formatPrice(currentPrice)}</Text>
+              </View>
+
+              <TouchableOpacity style={styles.addBtn} onPress={handleAdd}>
+                <Text style={styles.addBtnText}>AGREGAR</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Lista de vehículos agregados */}
+          {addedVehicles.length > 0 && (
+            <View style={styles.addedList}>
+              <Text style={styles.addedTitle}>
+                Vehículos agregados ({addedVehicles.length}):
+              </Text>
+
+              {addedVehicles.map((item) => (
+                <View key={item.id} style={styles.vehicleItem}>
+                  <View style={styles.vehicleInfo}>
+                    <Text style={styles.vehiclePlate}>
+                      🚗 {item.plate} · {item.vehicleType}
+                    </Text>
+                    <Text style={styles.vehicleModel}>{item.model}</Text>
+                  </View>
+
+                  <View style={styles.vehicleRight}>
+                    <Text style={styles.vehiclePrice}>{formatPrice(item.price)}</Text>
+                    <TouchableOpacity
+                      style={styles.removeBtn}
+                      onPress={() => onRemoveVehicle(item.id)}
+                      accessibilityLabel="Eliminar vehículo"
+                    >
+                      <TrashIcon size={16} color="#E63946" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
+
+// ─── Estilos ──────────────────────────────────────────────────────────────────
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: Spacing.two,
+  },
+  toggleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.three,
+    paddingHorizontal: Spacing.three,
+    borderRadius: 12,
+    borderWidth: 1.2,
+    borderColor: '#CCCCCC', // Borde grisáceo sutil de contorno
+    backgroundColor: '#FFFFFF',
+  },
+  toggleBtnActive: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderColor: '#BBBBBB',
+  },
+  toggleLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  toggleTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#222222',
+  },
+  toggleChevron: {
+    fontSize: 12,
+    color: '#777777',
+  },
+  expandedContent: {
+    backgroundColor: '#FAFAFA',
+    borderWidth: 1.2,
+    borderTopWidth: 0,
+    borderColor: '#BBBBBB',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    padding: Spacing.three,
+    gap: Spacing.three,
+  },
+  ratesBox: {
+    backgroundColor: '#FFFFFF',
+    padding: Spacing.two,
+    borderRadius: 8,
+    gap: 6,
+  },
+  ratesTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#555555',
+    textTransform: 'uppercase',
+  },
+  ratesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  ratePill: {
+    flexDirection: 'row',
+    gap: 4,
+    backgroundColor: '#EEF4FB',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  rateType: {
+    fontSize: 11,
+    color: '#0D4F9C',
+    fontWeight: '600',
+  },
+  ratePrice: {
+    fontSize: 11,
+    color: '#1A1A1A',
+    fontWeight: '700',
+  },
+  formBox: {
+    backgroundColor: '#FFFFFF',
+    padding: Spacing.three,
+    borderRadius: 10,
+    gap: Spacing.two,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  formSectionTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#1A1A1A',
+    letterSpacing: 0.5,
+  },
+  inputLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#777777',
+    marginTop: 2,
+  },
+  typeSelectorRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  typeChip: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 7,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    backgroundColor: '#FFFFFF',
+  },
+  typeChipSelected: {
+    borderColor: '#0D4F9C',
+    backgroundColor: '#0D4F9C',
+  },
+  typeChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#444444',
+  },
+  typeChipTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  input: {
+    backgroundColor: '#F7F7F7',
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 13,
+    color: '#1A1A1A',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  priceLabel: {
+    fontSize: 11,
+    color: '#777777',
+  },
+  priceValue: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1A1A1A',
+  },
+  addBtn: {
+    backgroundColor: '#000000',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+  },
+  addBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  addedList: {
+    gap: 6,
+    marginTop: 4,
+  },
+  addedTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#333333',
+  },
+  vehicleItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  vehicleInfo: {
+    gap: 2,
+  },
+  vehiclePlate: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  vehicleModel: {
+    fontSize: 11,
+    color: '#666666',
+  },
+  vehicleRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  vehiclePrice: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0D4F9C',
+  },
+  removeBtn: {
+    padding: 4,
+  },
+});
