@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -101,15 +100,15 @@ export default function EventDetailScreen() {
   const canContinue = totalTicketsCount > 0;
 
   function handleContinue() {
-    if (!canContinue) return;
+    if (!canContinue || !event) return;
 
-    Alert.alert(
-      'Continuar al Checkout',
-      `Has seleccionado ${totalTicketsCount} entrada(s)${
-        addedVehicles.length > 0 ? ` y ${addedVehicles.length} vehículo(s)` : ''
-      } por un total de $${grandTotal.toLocaleString('es-AR')}.\n\nEl flujo de compra (S3) se conectará a continuación.`,
-      [{ text: 'Aceptar' }]
-    );
+    router.push({
+      pathname: `/checkout/${event.id}` as any,
+      params: {
+        tickets: JSON.stringify(ticketQuantities),
+        vehicles: JSON.stringify(addedVehicles),
+      },
+    });
   }
 
   const formatCurrency = (amount: number) =>
