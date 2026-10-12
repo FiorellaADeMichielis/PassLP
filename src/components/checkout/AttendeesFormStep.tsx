@@ -164,6 +164,8 @@ export function AttendeesFormStep({
                     }
                     autoCapitalize="words"
                     autoCorrect={false}
+                    autoComplete="name-given"
+                    accessibilityLabel={`Nombre del asistente ${att.attendeeNumber}`}
                     returnKeyType="next"
                   />
                   {attErr.firstName ? (
@@ -185,6 +187,8 @@ export function AttendeesFormStep({
                     }
                     autoCapitalize="words"
                     autoCorrect={false}
+                    autoComplete="family-name"
+                    accessibilityLabel={`Apellido del asistente ${att.attendeeNumber}`}
                     returnKeyType="next"
                   />
                   {attErr.lastName ? (
@@ -205,6 +209,7 @@ export function AttendeesFormStep({
                   onChangeText={(val) => handleFieldChange(att.id, 'dni', val)}
                   keyboardType="numeric"
                   maxLength={10}
+                  accessibilityLabel={`DNI del asistente ${att.attendeeNumber}`}
                   returnKeyType="next"
                 />
                 {attErr.dni ? (

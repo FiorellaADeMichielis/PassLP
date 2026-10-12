@@ -199,6 +199,8 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('firstName', val)}
               autoCapitalize="words"
               autoCorrect={false}
+              autoComplete="name-given"
+              accessibilityLabel="Nombre del comprador"
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(30)}
@@ -222,6 +224,8 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('lastName', val)}
               autoCapitalize="words"
               autoCorrect={false}
+              autoComplete="family-name"
+              accessibilityLabel="Apellido del comprador"
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(30)}
@@ -248,6 +252,7 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('dni', val)}
               keyboardType="numeric"
               maxLength={10}
+              accessibilityLabel="DNI del comprador"
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(110)}
@@ -269,6 +274,8 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('phone', val)}
               keyboardType="phone-pad"
               maxLength={16}
+              autoComplete="tel"
+              accessibilityLabel="Teléfono de contacto"
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(110)}
@@ -320,6 +327,8 @@ export function BuyerFormStep({
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              autoComplete="email"
+              accessibilityLabel="Correo electrónico del comprador"
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(190)}
@@ -346,6 +355,8 @@ export function BuyerFormStep({
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            autoComplete="email"
+            accessibilityLabel="Confirmación de correo electrónico"
             returnKeyType="done"
             onFocus={() => onFocusField?.(270)}
             onSubmitEditing={handleNext}
