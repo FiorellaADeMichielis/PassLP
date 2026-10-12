@@ -21,6 +21,202 @@ const DEFAULT_PARKING_OPTIONS: ParkingOption[] = [
 ];
 
 export const MOCK_EVENTS: EventItem[] = [
+  // ─── 1. EVENTO REAL: ARMYFEST (Fiestas) ───────────────────────────────────
+  {
+    id: 'evento-armyfest-bts-hipico',
+    title: 'ARMYFEST 24/10 - AFTER SHOW BTS',
+    category: 'Fiestas',
+    date: 'Sábado, 24 De Octubre De 2026',
+    dateShort: '24/10/2026',
+    time: '23:00 hs',
+    venue: {
+      name: 'HÍPICO MUSIC BAR, LA PLATA',
+      address: 'Av. 52, entre 118 y 119, Paseo del Bosque',
+      city: 'La Plata',
+      province: 'Buenos Aires',
+    },
+    flyerUrl: require('@/assets/images/flyers/ARMYFEST_STORIES.png'),
+    heroBgColors: ['#1E0F2E', '#3D1C59'],
+    about:
+      'Finalmente BTS viene a la Argentina y se celebra A LO GRANDE! Después del Show del 24/10 en La Plata, nos vamos directo a la ARMYFEST - AFTER PARTY donde vamos a seguir festejando, cantando y bailando las canciones de BTS que tanto amamos junto a otrxs ARMY!\n\n💜SÁBADO 24/10 - Puertas abiertas a partir de las 23hs! En @hipico.musicbar , Av.52, entre 118 y 119, Paseo del Bosque, La Plata. 💜Fiesta para mayores de 18 años (llevar DNI físico o desde la app Mi Argentina)\n\nFIESTA FULL BTS - Proyección de videos - Todo ARIRANG y lo mejor de su discografía Stores K-pop y BTS - Stand de Fotos - Sorteos ÁLBUMES BTS! Lxs esperamos el 24/10 en la FIESTA DE BTS en La Plata IG: @cypher4kpop',
+    isFeatured: true,
+    hasParking: true,
+    parkingOptions: DEFAULT_PARKING_OPTIONS,
+    ticketTiers: [
+      {
+        id: 'tier-armyfest-tanda1',
+        tierLabel: 'Tanda 1',
+        name: 'Entrada General After Show BTS',
+        type: 'Normal',
+        description: 'Acceso a partir de las 23:00 hs. Fiesta para mayores de 18 años.',
+        price: 10000,
+        availableQuantity: 150,
+        maxPerPurchase: 6,
+      },
+      {
+        id: 'tier-armyfest-vip',
+        tierLabel: 'VIP',
+        name: 'Pase VIP BTS + Kit Fan',
+        type: 'VIP',
+        description: 'Acceso preferencial, kit fan ARIRANG y participación en sorteos de álbumes.',
+        price: 18000,
+        availableQuantity: 30,
+        maxPerPurchase: 4,
+      },
+    ],
+  },
+
+  // ─── 2. EVENTO REAL: Fiesta Vete (Fiestas) ─────────────────────────────────
+  {
+    id: 'evento-fiesta-vete-hipico',
+    title: 'Fiesta Vete 09/10',
+    category: 'Fiestas',
+    date: 'Viernes, 09 De Octubre De 2026',
+    dateShort: '09/10/2026',
+    time: '23:00 hs',
+    venue: {
+      name: 'Club Hípico',
+      address: 'Av 52 e/ 118 y 119',
+      city: 'La Plata',
+      province: 'Buenos Aires',
+    },
+    flyerUrl: require('@/assets/images/flyers/1791065209558-fiesta_vete_09_10.jpeg'),
+    heroBgColors: ['#181512', '#2E221B'],
+    about:
+      'FIESTA VETE Lugar: Club Hipico, avenida 52 entre 118 y 119. La Plata, Buenos Aires. Entrada a partir de la 1 y valida hasta 2:30 am. Únicamente mayores de 18 años.\n\nENTRADA VALIDA HASTA 2:30 AM',
+    isFeatured: true,
+    hasParking: true,
+    parkingOptions: DEFAULT_PARKING_OPTIONS,
+    ticketTiers: [
+      {
+        id: 'tier-vete-lote1',
+        tierLabel: 'Lote 1',
+        name: 'Entrada General Vete',
+        type: 'Normal',
+        description: 'Entrada a partir de la 1:00 am y válida hasta 2:30 am. Únicamente mayores de 18 años.',
+        price: 8000,
+        availableQuantity: 100,
+        maxPerPurchase: 6,
+      },
+    ],
+  },
+
+  // ─── 3. EVENTO REAL: HALLOWEEN EN EL HÍPICO (Fiestas) ─────────────────────
+  {
+    id: 'evento-halloween-hipico-disfraces',
+    title: 'HALLOWEEN EN EL HIPICO (Fiesta de Disfraces)',
+    category: 'Fiestas',
+    date: 'Sábado, 31 De Octubre De 2026',
+    dateShort: '31/10/2026',
+    time: '21:00 hs',
+    venue: {
+      name: 'Club Hípico (Espacio al aire libre y techado)',
+      address: 'Av. 52 entre 118 y 119, Paseo del Bosque',
+      city: 'La Plata',
+      province: 'Buenos Aires',
+    },
+    flyerUrl: require('@/assets/images/flyers/1789494268130-500x500_halloween.jpg.jpeg'),
+    heroBgColors: ['#100809', '#290F0E'],
+    about:
+      'Un lugar con espacio al aire libre y espacios techados ubicado en el bosque de la plata.\n\nav.52 entre 118 y 119 paseo del bosque, LA PLATA, BUENOS AIRES, ARGENTINA\n\nSobre el evento:\nDRESSCODE DISFRAZADO !!!!',
+    isFeatured: true,
+    hasParking: true,
+    parkingOptions: DEFAULT_PARKING_OPTIONS,
+    ticketTiers: [
+      {
+        id: 'tier-halloween-tanda1',
+        tierLabel: 'Tanda 1',
+        name: 'HALLOWEEN EN EL HIPICO Tanda 1',
+        type: 'Normal',
+        description: 'FIESTA DE DISFRACES. DRESSCODE DISFRAZADO !!!!',
+        price: 10000,
+        availableQuantity: 120,
+        maxPerPurchase: 8,
+      },
+      {
+        id: 'tier-halloween-tanda2',
+        tierLabel: 'Tanda 2',
+        name: 'HALLOWEEN EN EL HIPICO Tanda 2',
+        type: 'Normal',
+        description: 'Ingreso general fiesta de disfraces en el bosque.',
+        price: 13000,
+        availableQuantity: 60,
+        maxPerPurchase: 6,
+      },
+    ],
+  },
+
+  // ─── 4. EVENTO REAL: LA RE 2000 (Discotecas) ──────────────────────────────
+  {
+    id: 'evento-la-re-2000-rodrigo',
+    title: 'LA RE 2000 PRESENTA A RODRIGO EL POTRO',
+    category: 'Discotecas',
+    date: 'Sábado, 17 De Octubre De 2026',
+    dateShort: '17/10/2026',
+    time: '21:00 hs',
+    venue: {
+      name: 'Espacio Bosque Hípico',
+      address: 'Av. 52 entre 118 y 119, Paseo del Bosque',
+      city: 'La Plata',
+      province: 'Buenos Aires',
+    },
+    flyerUrl: require('@/assets/images/flyers/LARE_PRESENTA.jpg'),
+    heroBgColors: ['#131B26', '#1E324A'],
+    about:
+      'Un lugar con espacio al aire libre y espacios techados ubicado en el bosque de la plata.\n\nav.52 entre 118 y 119 paseo del bosque, LA PLATA, BUENOS AIRES, Argentina\n\nSobre el evento:\nbanda de cover en vivo.',
+    isFeatured: true,
+    hasParking: true,
+    parkingOptions: DEFAULT_PARKING_OPTIONS,
+    ticketTiers: [
+      {
+        id: 'tier-lare-general',
+        tierLabel: 'Lote 1',
+        name: 'Acceso General La Re 2000',
+        type: 'Normal',
+        description: 'Banda de cover en vivo. Espacio con sector al aire libre y techado.',
+        price: 9000,
+        availableQuantity: 100,
+        maxPerPurchase: 6,
+      },
+    ],
+  },
+
+  // ─── 5. EVENTO REAL: Odonto Fest (Fiestas) ────────────────────────────────
+  {
+    id: 'evento-odonto-fest-6ta-edicion',
+    title: 'Odonto Fest 6ta Edición',
+    category: 'Fiestas',
+    date: 'Viernes, 23 De Octubre De 2026',
+    dateShort: '23/10/2026',
+    time: '23:59 hs',
+    venue: {
+      name: 'Club Hípico',
+      address: 'Av 52 e/ 118 y 119',
+      city: 'La Plata',
+      province: 'Buenos Aires',
+    },
+    flyerUrl: require('@/assets/images/flyers/OdontoFest.jpeg'),
+    heroBgColors: ['#151C18', '#22382D'],
+    about:
+      'ODONTO FEST Entrada a partir de la 1 y valida hasta 2:30 am. Únicamente mayores de 18 años',
+    isFeatured: true,
+    hasParking: true,
+    parkingOptions: DEFAULT_PARKING_OPTIONS,
+    ticketTiers: [
+      {
+        id: 'tier-odonto-lote1',
+        tierLabel: 'Lote 1',
+        name: 'Entrada General Odonto Fest',
+        type: 'Normal',
+        description: 'Entrada a partir de la 1:00 am y válida hasta 2:30 am. Mayores de 18 años.',
+        price: 8500,
+        availableQuantity: 90,
+        maxPerPurchase: 6,
+      },
+    ],
+  },
+
+  // ─── 6. Recitales (conservado para no dejar vacía la categoría) ───────────
   {
     id: 'evento-recital-primavera-2026',
     title: 'FESTIVAL PRIMAVERA SOUNDSTAGE',
@@ -37,7 +233,7 @@ export const MOCK_EVENTS: EventItem[] = [
     flyerUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80',
     heroBgColors: ['#120D1C', '#2A183C'],
     about: 'El festival al aire libre más esperado del año con artistas invitados y sector gastronómico.',
-    isFeatured: true,
+    isFeatured: false,
     hasParking: true,
     parkingOptions: DEFAULT_PARKING_OPTIONS,
     ticketTiers: [
@@ -51,60 +247,10 @@ export const MOCK_EVENTS: EventItem[] = [
         availableQuantity: 50,
         maxPerPurchase: 6,
       },
-      {
-        id: 'tier-recital-platea',
-        tierLabel: 'Lote 1',
-        name: 'Platea Preferencial Numerada',
-        type: 'VIP',
-        description: 'Ubicación asignada en platea baja con servicio de barra exclusivo.',
-        price: 32000,
-        availableQuantity: 20,
-        maxPerPurchase: 4,
-      },
     ],
   },
-  {
-    id: 'evento-noche-electronica-groove',
-    title: 'NOCHE ELECTRÓNICA SOUND LAB',
-    category: 'Fiestas',
-    date: 'Sábado, 31 De Octubre De 2026',
-    dateShort: '31/10/2026',
-    time: '23:30 hs',
-    venue: {
-      name: 'Club Hípico & Polo Lounge',
-      address: 'Calle 528 y Camino Centenario',
-      city: 'Gonnet',
-      province: 'Buenos Aires',
-    },
-    flyerUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80',
-    heroBgColors: ['#100809', '#290F0E'],
-    about: 'Show visual inmersivo y DJs residentes de primer nivel hasta el amanecer.',
-    isFeatured: true,
-    hasParking: true,
-    parkingOptions: DEFAULT_PARKING_OPTIONS,
-    ticketTiers: [
-      {
-        id: 'tier-electro-tanda1',
-        tierLabel: 'Tanda 1',
-        name: 'Entrada General Halloween',
-        type: 'Normal',
-        description: 'Ingreso hasta las 02:00 hs con consumición de bienvenida.',
-        price: 10000,
-        availableQuantity: 100,
-        maxPerPurchase: 8,
-      },
-      {
-        id: 'tier-electro-vip',
-        tierLabel: 'Tanda 1',
-        name: 'Backstage & VIP Deck',
-        type: 'VIP',
-        description: 'Acceso preferencial sin fila, vista elevada y baños exclusivos.',
-        price: 24000,
-        availableQuantity: 15,
-        maxPerPurchase: 4,
-      },
-    ],
-  },
+
+  // ─── 7. Actividades (conservado para no dejar vacía la categoría) ──────────
   {
     id: 'evento-conferencia-tech-innovacion',
     title: 'CONGRESO TECH & DATA SUMMIT',
@@ -121,7 +267,7 @@ export const MOCK_EVENTS: EventItem[] = [
     flyerUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80',
     heroBgColors: ['#0A141E', '#16283C'],
     about: 'Un espacio de networking, workshops prácticos y conferencias magistrales sobre inteligencia artificial y producto digital.',
-    isFeatured: true,
+    isFeatured: false,
     hasParking: false,
     ticketTiers: [
       {
@@ -134,18 +280,10 @@ export const MOCK_EVENTS: EventItem[] = [
         availableQuantity: 80,
         maxPerPurchase: 5,
       },
-      {
-        id: 'tier-conf-workshop',
-        tierLabel: 'Pase Premium',
-        name: 'Charlas + Talleres Prácticos VIP',
-        type: 'VIP',
-        description: 'Acceso a salas de talleres reducidos y almuerzo con speakers.',
-        price: 28000,
-        availableQuantity: 25,
-        maxPerPurchase: 3,
-      },
     ],
   },
+
+  // ─── 8. Teatro (conservado para no dejar vacía la categoría) ───────────────
   {
     id: 'evento-teatro-comedia-clasica',
     title: 'OBRA TEATRAL: EL ENREDO PERFECTO',
@@ -166,16 +304,6 @@ export const MOCK_EVENTS: EventItem[] = [
     hasParking: false,
     ticketTiers: [
       {
-        id: 'tier-teatro-pullman',
-        tierLabel: 'Sector 2',
-        name: 'Pullman Superior',
-        type: 'Normal',
-        description: 'Buena acústica y visión panorámica del escenario.',
-        price: 8500,
-        availableQuantity: 40,
-        maxPerPurchase: 4,
-      },
-      {
         id: 'tier-teatro-platea',
         tierLabel: 'Sector 1',
         name: 'Platea Central',
@@ -187,6 +315,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
+
+  // ─── 9. Eventos deportivos (conservado para no dejar vacía la categoría) ──
   {
     id: 'evento-deportivo-torneo-nocturno',
     title: 'SUPERCLÁSICO NOCTURNO DE BÁSQUET',
@@ -219,37 +349,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
-  {
-    id: 'evento-discoteca-retro-hits',
-    title: 'RETRO DANCE 80s & 90s PARTY',
-    category: 'Discotecas',
-    date: 'Viernes, 27 De Noviembre De 2026',
-    dateShort: '27/11/2026',
-    time: '23:00 hs',
-    venue: {
-      name: 'Galpón de las Artes & Club',
-      address: 'Calle 71 entre 13 y 14',
-      city: 'La Plata',
-      province: 'Buenos Aires',
-    },
-    flyerUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80',
-    heroBgColors: ['#1A0C16', '#35142E'],
-    about: 'Los mejores clásicos de dos décadas inolvidables en una pista gigante con ambientación temática.',
-    isFeatured: false,
-    hasParking: false,
-    ticketTiers: [
-      {
-        id: 'tier-retro-anticipada',
-        tierLabel: 'Anticipada',
-        name: 'Ingreso General + Trago',
-        type: 'Normal',
-        description: 'Válido hasta las 02:30 hs. Incluye una consumición.',
-        price: 7500,
-        availableQuantity: 70,
-        maxPerPurchase: 8,
-      },
-    ],
-  },
+
+  // ─── 10. Cine (conservado para no dejar vacía la categoría) ────────────────
   {
     id: 'evento-cine-maraton-culto',
     title: 'MARATÓN CINE DE CULTO BAJO LAS ESTRELLAS',
@@ -282,6 +383,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
+
+  // ─── 11. Bares (conservado para no dejar vacía la categoría) ───────────────
   {
     id: 'evento-bar-acustico-tapas',
     title: 'ACÚSTICO & TAPAS EN VIVO',
@@ -313,6 +416,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
+
+  // ─── 12. Cenas (conservado para no dejar vacía la categoría) ───────────────
   {
     id: 'evento-cena-maridaje-autor',
     title: 'CENA DEGUSTACIÓN & MARIDAJE DE AUTOR',
@@ -345,6 +450,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
+
+  // ─── 13. Recepciones (conservado para no dejar vacía la categoría) ─────────
   {
     id: 'evento-recepcion-gala-anual',
     title: 'RECEPCIÓN & GALA DE FIN DE AÑO',
@@ -377,6 +484,8 @@ export const MOCK_EVENTS: EventItem[] = [
       },
     ],
   },
+
+  // ─── 14. Sessions (conservado para no dejar vacía la categoría) ───────────
   {
     id: 'evento-sunset-electronic-sessions',
     title: 'SUNSET ROOFTOP SESSIONS',
@@ -410,4 +519,3 @@ export const MOCK_EVENTS: EventItem[] = [
     ],
   },
 ];
-
