@@ -110,9 +110,13 @@ export function ParkingSection({
       >
         <View style={styles.toggleLeft}>
           <ParkingBadgeIcon size={20} color="#0D4F9C" />
-          <Text style={styles.toggleTitle}>Comprar estacionamiento</Text>
+          <Text style={styles.toggleTitle} maxFontSizeMultiplier={1.3}>
+            Comprar estacionamiento
+          </Text>
         </View>
-        <Text style={styles.toggleChevron}>{isExpanded ? '▲' : '▼'}</Text>
+        <Text style={styles.toggleChevron} maxFontSizeMultiplier={1.3}>
+          {isExpanded ? '▲' : '▼'}
+        </Text>
       </TouchableOpacity>
 
       {/* Contenido desplegable */}
@@ -120,12 +124,18 @@ export function ParkingSection({
         <View style={styles.expandedContent}>
           {/* Tarifas de referencia */}
           <View style={styles.ratesBox}>
-            <Text style={styles.ratesTitle}>Tarifas disponibles:</Text>
+            <Text style={styles.ratesTitle} maxFontSizeMultiplier={1.3}>
+              Tarifas disponibles:
+            </Text>
             <View style={styles.ratesRow}>
               {options.map((opt) => (
                 <View key={opt.id} style={styles.ratePill}>
-                  <Text style={styles.rateType}>{opt.vehicleType}:</Text>
-                  <Text style={styles.ratePrice}>{formatPrice(opt.price)}</Text>
+                  <Text style={styles.rateType} maxFontSizeMultiplier={1.3}>
+                    {opt.vehicleType}:
+                  </Text>
+                  <Text style={styles.ratePrice} maxFontSizeMultiplier={1.3}>
+                    {formatPrice(opt.price)}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -265,15 +275,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
+    minWidth: 0,
   },
   toggleTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: '#222222',
+    flexShrink: 1,
   },
   toggleChevron: {
     fontSize: 12,
     color: '#777777',
+    paddingLeft: 6,
+    flexShrink: 0,
   },
   expandedContent: {
     backgroundColor: '#FAFAFA',

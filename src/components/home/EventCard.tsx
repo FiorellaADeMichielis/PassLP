@@ -65,24 +65,40 @@ export function EventCard({ event, onPress }: EventCardProps) {
       {/* Cuerpo de la tarjeta */}
       <View style={styles.body}>
         {/* Categoría */}
-        <Text style={[styles.category, { color: colors.textMuted }]} numberOfLines={1}>
+        <Text
+          style={[styles.category, { color: colors.textMuted }]}
+          numberOfLines={1}
+          maxFontSizeMultiplier={1.3}
+        >
           {event.category.toUpperCase()}
         </Text>
 
         {/* Título */}
-        <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
+        <Text
+          style={[styles.title, { color: colors.textPrimary }]}
+          numberOfLines={2}
+          maxFontSizeMultiplier={1.3}
+        >
           {event.title}
         </Text>
 
         {/* Fecha y hora */}
-        <Text style={[styles.meta, { color: colors.textSecondary }]} numberOfLines={1}>
+        <Text
+          style={[styles.meta, { color: colors.textSecondary }]}
+          numberOfLines={1}
+          maxFontSizeMultiplier={1.3}
+        >
           {event.dateShort} · {event.time}
         </Text>
 
         {/* Lugar */}
         <View style={styles.venueRow}>
           <PinIcon size={13} color="#E85D04" style={styles.pinIcon} />
-          <Text style={[styles.venue, { color: colors.textSecondary }]} numberOfLines={1}>
+          <Text
+            style={[styles.venue, { color: colors.textSecondary }]}
+            numberOfLines={1}
+            maxFontSizeMultiplier={1.3}
+          >
             {event.venue.name}, {event.venue.city}
           </Text>
         </View>
@@ -90,7 +106,10 @@ export function EventCard({ event, onPress }: EventCardProps) {
         {/* Precio base y botón Comprar */}
         <View style={styles.footer}>
           {event.ticketTiers.length > 0 && (
-            <Text style={[styles.price, { color: colors.textPrimary }]}>
+            <Text
+              style={[styles.price, { color: colors.textPrimary }]}
+              maxFontSizeMultiplier={1.3}
+            >
               {'Desde '}
               {new Intl.NumberFormat('es-AR', {
                 style: 'currency',
@@ -108,7 +127,9 @@ export function EventCard({ event, onPress }: EventCardProps) {
             accessibilityRole="button"
             accessibilityLabel={`Comprar entradas para ${event.title}`}
           >
-            <Text style={styles.buyButtonText}>Comprar</Text>
+            <Text style={styles.buyButtonText} maxFontSizeMultiplier={1.3}>
+              Comprar
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -175,11 +196,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 6,
     marginTop: Spacing.two,
   },
   price: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     flexShrink: 1,
   },
   buyButton: {
@@ -187,6 +210,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
     borderRadius: 999,
+    alignSelf: 'flex-start',
   },
   buyButtonText: {
     color: BUY_BTN_TEXT,

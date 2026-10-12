@@ -53,17 +53,27 @@ export function TicketTierItem({
       {/* Información del lote */}
       <View style={styles.infoCol}>
         <View style={styles.badgeRow}>
-          <Text style={styles.tierLabel}>{tier.tierLabel.toUpperCase()}</Text>
-          <Text style={styles.tierType}>· {tier.type}</Text>
+          <Text style={styles.tierLabel} maxFontSizeMultiplier={1.3}>
+            {tier.tierLabel.toUpperCase()}
+          </Text>
+          <Text style={styles.tierType} maxFontSizeMultiplier={1.3}>
+            · {tier.type}
+          </Text>
         </View>
 
-        <Text style={styles.name}>{tier.name}</Text>
+        <Text style={styles.name} maxFontSizeMultiplier={1.3}>
+          {tier.name}
+        </Text>
 
         {tier.description ? (
-          <Text style={styles.description}>{tier.description}</Text>
+          <Text style={styles.description} maxFontSizeMultiplier={1.3}>
+            {tier.description}
+          </Text>
         ) : null}
 
-        <Text style={styles.price}>{formattedPrice}</Text>
+        <Text style={styles.price} maxFontSizeMultiplier={1.3}>
+          {formattedPrice}
+        </Text>
       </View>
 
       {/* Selector de cantidad en píldora negra */}
@@ -79,7 +89,9 @@ export function TicketTierItem({
             <MinusIcon size={12} color={isMin ? '#666666' : '#FFFFFF'} />
           </TouchableOpacity>
 
-          <Text style={styles.quantityText}>{quantity}</Text>
+          <Text style={styles.quantityText} maxFontSizeMultiplier={1.3}>
+            {quantity}
+          </Text>
 
           <TouchableOpacity
             style={[styles.stepperBtn, isMax && styles.stepperBtnDisabled]}
@@ -93,7 +105,7 @@ export function TicketTierItem({
         </View>
 
         {tier.availableQuantity <= 5 && tier.availableQuantity > 0 ? (
-          <Text style={styles.lastUnitsText}>
+          <Text style={styles.lastUnitsText} maxFontSizeMultiplier={1.3}>
             ¡Últimas {tier.availableQuantity} entradas!
           </Text>
         ) : null}
@@ -123,11 +135,13 @@ const styles = StyleSheet.create({
   },
   infoCol: {
     flex: 1,
+    minWidth: 0,
     gap: 3,
   },
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 4,
   },
   tierLabel: {
@@ -158,7 +172,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   stepperWrapper: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    flexShrink: 0,
     gap: 4,
   },
   stepperPill: {
