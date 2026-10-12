@@ -4,12 +4,14 @@ import { Href, useRouter } from 'expo-router';
 import {
   Animated,
   Dimensions,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 
 import { EventItem } from '@/types';
+import { resolveFlyerSource } from '@/utils/imageUtils';
 
 // ─── Constantes de layout ─────────────────────────────────────────────────────
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -60,7 +62,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
         contentContainerStyle={styles.listContent}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: true }
+          { useNativeDriver: Platform.OS !== 'web' }
         )}
         scrollEventThrottle={16}
         renderItem={({ item, index }) => {
@@ -102,7 +104,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 ]}
               >
                 <Image
-                  source={{ uri: item.flyerUrl }}
+                  source={resolveFlyerSource(item.flyerUrl)}
                   style={styles.poster}
                   contentFit="cover"
                   accessibilityLabel={`Flyer de ${item.title}`}

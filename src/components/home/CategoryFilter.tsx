@@ -3,13 +3,8 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { Spacing } from '@/constants/theme';
 import { EventCategory } from '@/types';
 
-// ─── Colores de diseño (según PASSLP_REFERENCIA.md §2.3) ─────────────────────
-const CHIP_BG = 'transparent';
-const CHIP_BORDER = '#CCCCCC';
-const CHIP_TEXT = '#333333';
-const CHIP_SELECTED_BG = '#332F2B';
-const CHIP_SELECTED_BORDER = '#332F2B';
-const CHIP_SELECTED_TEXT = '#FFFFFF';
+
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface CategoryFilterProps {
@@ -26,16 +21,17 @@ interface CategoryFilterProps {
 /**
  * Fila horizontal scrolleable de chips para filtrar eventos por categoría.
  *
- * El chip activo se muestra con fondo oscuro; los inactivos tienen
- * borde fino y fondo transparente, según el estilo de la referencia PASSLP.
+ * Se adapta automáticamente al tema oscuro o claro del sistema.
  */
 export function CategoryFilter({ categories, selected, onSelect }: CategoryFilterProps) {
+  const { colors } = useAppTheme();
+
   return (
     <View style={styles.wrapper}>
       {/* Título de sección con línea */}
       <View style={styles.header}>
-        <Text style={styles.title}>Categorías</Text>
-        <View style={styles.line} />
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Categorías</Text>
+        <View style={[styles.line, { backgroundColor: colors.cardBorder }]} />
       </View>
 
       <ScrollView
@@ -49,13 +45,27 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
           return (
             <TouchableOpacity
               key={category}
-              style={[styles.chip, isSelected && styles.chipSelected]}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: isSelected ? colors.chipSelectedBg : colors.chipBg,
+                  borderColor: isSelected ? colors.chipSelectedBg : colors.chipBorder,
+                },
+              ]}
               onPress={() => onSelect(category)}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`Categoría ${category}`}
             >
-              <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+              <Text
+                style={[
+                  styles.chipText,
+                  {
+                    color: isSelected ? colors.chipSelectedText : colors.chipText,
+                    fontWeight: isSelected ? '700' : '500',
+                  },
+                ]}
+              >
                 {category}
               </Text>
             </TouchableOpacity>
@@ -95,24 +105,12 @@ const styles = StyleSheet.create({
   },
   chip: {
     borderWidth: 1,
-    borderColor: CHIP_BORDER,
-    backgroundColor: CHIP_BG,
     borderRadius: 999,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
   },
-  chipSelected: {
-    backgroundColor: CHIP_SELECTED_BG,
-    borderColor: CHIP_SELECTED_BORDER,
-  },
   chipText: {
     fontSize: 12,
-    color: CHIP_TEXT,
-    fontWeight: '500',
-  },
-  chipTextSelected: {
-    color: CHIP_SELECTED_TEXT,
-    fontWeight: '700',
   },
 });
 

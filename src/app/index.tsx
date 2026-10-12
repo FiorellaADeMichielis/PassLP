@@ -9,19 +9,16 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 import { CategoryFilter } from '@/components/home/CategoryFilter';
 import { EventCard } from '@/components/home/EventCard';
 import { FeaturedCarousel } from '@/components/home/FeaturedCarousel';
 import { HomeFooter } from '@/components/home/HomeFooter';
 import { HomeHeader } from '@/components/home/HomeHeader';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services/eventsService';
 import { EventCategory, EventItem } from '@/types';
-
-// ─── Colores ───────────────────────────────────────────────────────────────────
-const SCREEN_BG = '#F5F5F5';
-const SECTION_TITLE_COLOR = '#1A1A1A';
-const EMPTY_TEXT_COLOR = '#888888';
 
 // ─── Pantalla principal ────────────────────────────────────────────────────────
 
@@ -30,9 +27,10 @@ const EMPTY_TEXT_COLOR = '#888888';
  *
  * Orquesta el estado global de la pantalla de inicio: búsqueda, categoría
  * seleccionada, lista de eventos filtrados y eventos destacados.
- * Delega el renderizado a componentes presentacionales puros.
+ * Adapta su paleta y la barra superior al tema activo del sistema.
  */
 export default function HomeScreen() {
+  const { colors } = useAppTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<EventCategory>('Todas');
   const [categories, setCategories] = useState<EventCategory[]>([]);
@@ -117,7 +115,7 @@ export default function HomeScreen() {
     if (loading) return null;
     return (
       <View style={styles.emptyState}>
-        <Text style={styles.emptyText}>
+        <Text style={[styles.emptyText, { color: colors.textMuted }]}>
           No se encontraron eventos{searchQuery ? ` para "${searchQuery}"` : ''}.
         </Text>
       </View>
@@ -126,13 +124,18 @@ export default function HomeScreen() {
 
   // ── Layout ─────────────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.headerBg }]}
+      edges={['top']}
+    >
+      <StatusBar style={colors.statusBarStyle} />
+
       {/* Header siempre visible arriba */}
       <HomeHeader searchQuery={searchQuery} onSearchChange={handleSearchChange} />
 
       <ScrollView
         ref={scrollRef}
-        style={styles.scroll}
+        style={[styles.scroll, { backgroundColor: colors.screenBg }]}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -158,7 +161,7 @@ export default function HomeScreen() {
         />
 
         {/* Título de sección */}
-        <Text style={styles.sectionTitle}>Eventos</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Eventos</Text>
 
         {/* Grilla de eventos */}
         {loading ? (
@@ -195,7 +198,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: SCREEN_BG,
   },
   scroll: {
     flex: 1,
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: SECTION_TITLE_COLOR,
     marginHorizontal: 16,
     marginTop: 8,
     marginBottom: 4,
@@ -232,7 +233,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: EMPTY_TEXT_COLOR,
     textAlign: 'center',
   },
 });

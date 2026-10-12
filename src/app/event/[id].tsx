@@ -9,18 +9,18 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 import { EventAbout } from '@/components/event/EventAbout';
 import { EventHero } from '@/components/event/EventHero';
 import { ParkingSection } from '@/components/event/ParkingSection';
 import { TicketTierItem } from '@/components/event/TicketTierItem';
 import { Spacing } from '@/constants/theme';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services/eventsService';
 import { EventItem, ParkingVehicle } from '@/types';
 
 // ─── Colores según PASSLP_REFERENCIA.md §3.2, §3.4 y §9.1 ───────────────────
-const SCREEN_BG = '#F5F5F5';
-const TICKETS_SECTION_BG = '#FFFFFF';
 const BTN_CONTINUAR_ACTIVE_BG = '#54C1C3'; // Teal activo PASSLP
 const BTN_CONTINUAR_ACTIVE_TEXT = '#332F2B';
 const BTN_CONTINUAR_DISABLED_BG = '#A4CFD0'; // Teal atenuado PASSLP
@@ -38,6 +38,7 @@ export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   const [event, setEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -138,30 +139,47 @@ export default function EventDetailScreen() {
         <Text style={styles.errorSubtitle}>
           El evento seleccionado no existe o no se encuentra disponible.
         </Text>
-        <TouchableOpacity style={styles.errorBtn} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.errorBtn}
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/');
+            }
+          }}
+        >
           <Text style={styles.errorBtnText}>Volver a la cartelera</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
   }
 
+  const [bgStart] = event?.heroBgColors || ['#1E1A18', '#100D0B'];
+
   // ── Layout principal ────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgStart }]} edges={['top']}>
+      <StatusBar style="light" />
       <ScrollView
-        style={styles.scroll}
+        style={[styles.scroll, { backgroundColor: colors.screenBg }]}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* 1. Bloque Hero superior */}
         <EventHero event={event} />
 
-        <View style={styles.body}>
+        <View style={[styles.body, { backgroundColor: colors.screenBg }]}>
           {/* 2. Sección TICKETS */}
-          <View style={styles.ticketsSection}>
+          <View
+            style={[
+              styles.ticketsSection,
+              { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+            ]}
+          >
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>TICKETS</Text>
-              <Text style={styles.sectionSubtitle}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>TICKETS</Text>
+              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
                 Selecciona la cantidad de entradas que deseas
               </Text>
             </View>
@@ -197,18 +215,24 @@ export default function EventDetailScreen() {
       <View
         style={[
           styles.bottomBar,
-          { paddingBottom: Math.max(insets.bottom, 12) },
+          {
+            backgroundColor: colors.cardBg,
+            borderTopColor: colors.cardBorder,
+            paddingBottom: Math.max(insets.bottom, 12),
+          },
         ]}
       >
         <View style={styles.summaryRow}>
           <View>
-            <Text style={styles.summaryLabel}>
+            <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>
               {totalTicketsCount > 0
                 ? `${totalTicketsCount} entrada${totalTicketsCount > 1 ? 's' : ''}`
                 : 'Selecciona tus entradas'}
             </Text>
             {totalTicketsCount > 0 && (
-              <Text style={styles.summaryTotal}>{formatCurrency(grandTotal)}</Text>
+              <Text style={[styles.summaryTotal, { color: colors.textPrimary }]}>
+                {formatCurrency(grandTotal)}
+              </Text>
             )}
           </View>
 
@@ -246,13 +270,11 @@ export default function EventDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: SCREEN_BG,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: SCREEN_BG,
     gap: Spacing.two,
   },
   loadingText: {
@@ -264,7 +286,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.four,
-    backgroundColor: SCREEN_BG,
     gap: Spacing.two,
   },
   errorTitle: {
@@ -300,12 +321,10 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
   },
   ticketsSection: {
-    backgroundColor: TICKETS_SECTION_BG,
     borderRadius: 14,
     padding: Spacing.three,
     marginVertical: Spacing.two,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
   },
   sectionHeader: {
     marginBottom: Spacing.two,

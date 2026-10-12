@@ -4,13 +4,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { PinIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { EventItem } from '@/types';
+import { resolveFlyerSource } from '@/utils/imageUtils';
 
-// ─── Colores de diseño (según PASSLP_REFERENCIA.md) ─────────────────────────
-const CARD_BG = '#FFFFFF';
-const TITLE_COLOR = '#1A1A1A';
-const SECONDARY_COLOR = '#666666';
-const CATEGORY_COLOR = '#999999';
 const BUY_BTN_BG = '#E85D04';
 const BUY_BTN_TEXT = '#FFFFFF';
 const SHADOW_COLOR = '#000000';
@@ -32,11 +29,12 @@ interface EventCardProps {
  * Tarjeta de evento para la grilla de la pantalla principal.
  *
  * Muestra flyer, título, fecha, hora, lugar y un botón de compra.
- * Es un componente presentacional puro: no accede a servicios directamente,
- * recibe los datos por props.
+ * Es un componente presentacional puro que adapta sus colores automáticamente
+ * al tema del sistema para legibilidad óptima.
  */
 export function EventCard({ event, onPress }: EventCardProps) {
   const router = useRouter();
+  const { colors } = useAppTheme();
 
   function handlePress() {
     if (onPress) {
@@ -47,10 +45,18 @@ export function EventCard({ event, onPress }: EventCardProps) {
   }
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.cardBg,
+          borderColor: colors.cardBorder,
+        },
+      ]}
+    >
       {/* Flyer: proporción 3:4 */}
       <Image
-        source={{ uri: event.flyerUrl }}
+        source={resolveFlyerSource(event.flyerUrl)}
         style={styles.flyer}
         contentFit="cover"
         accessibilityLabel={`Flyer de ${event.title}`}
@@ -59,24 +65,24 @@ export function EventCard({ event, onPress }: EventCardProps) {
       {/* Cuerpo de la tarjeta */}
       <View style={styles.body}>
         {/* Categoría */}
-        <Text style={styles.category} numberOfLines={1}>
+        <Text style={[styles.category, { color: colors.textMuted }]} numberOfLines={1}>
           {event.category.toUpperCase()}
         </Text>
 
         {/* Título */}
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
           {event.title}
         </Text>
 
         {/* Fecha y hora */}
-        <Text style={styles.meta} numberOfLines={1}>
+        <Text style={[styles.meta, { color: colors.textSecondary }]} numberOfLines={1}>
           {event.dateShort} · {event.time}
         </Text>
 
         {/* Lugar */}
         <View style={styles.venueRow}>
           <PinIcon size={13} color="#E85D04" style={styles.pinIcon} />
-          <Text style={styles.venue} numberOfLines={1}>
+          <Text style={[styles.venue, { color: colors.textSecondary }]} numberOfLines={1}>
             {event.venue.name}, {event.venue.city}
           </Text>
         </View>
@@ -84,7 +90,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
         {/* Precio base y botón Comprar */}
         <View style={styles.footer}>
           {event.ticketTiers.length > 0 && (
-            <Text style={styles.price}>
+            <Text style={[styles.price, { color: colors.textPrimary }]}>
               {'Desde '}
               {new Intl.NumberFormat('es-AR', {
                 style: 'currency',
@@ -114,8 +120,8 @@ export function EventCard({ event, onPress }: EventCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: CARD_BG,
     borderRadius: 12,
+    borderWidth: 1,
     overflow: 'hidden',
     // Sombra en iOS
     shadowColor: SHADOW_COLOR,
@@ -137,20 +143,17 @@ const styles = StyleSheet.create({
   category: {
     fontSize: 10,
     fontWeight: '600',
-    color: CATEGORY_COLOR,
     letterSpacing: 0.8,
   },
   title: {
     fontSize: 13,
     fontWeight: '700',
-    color: TITLE_COLOR,
     textTransform: 'uppercase',
     lineHeight: 18,
     marginTop: Spacing.one,
   },
   meta: {
     fontSize: 11,
-    color: SECONDARY_COLOR,
     marginTop: Spacing.one,
   },
   venueRow: {
@@ -166,7 +169,6 @@ const styles = StyleSheet.create({
   },
   venue: {
     fontSize: 11,
-    color: SECONDARY_COLOR,
     flex: 1,
   },
   footer: {
@@ -178,7 +180,6 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 12,
     fontWeight: '600',
-    color: TITLE_COLOR,
     flexShrink: 1,
   },
   buyButton: {

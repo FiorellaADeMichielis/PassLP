@@ -10,11 +10,7 @@ import {
   TicketsIcon,
 } from '@/components/ui/Icons';
 
-// ─── Colores con alto contraste (WCAG AA/AAA sobre fondo #332F2B) ─────────────
-const BAR_BG = '#332F2B';
-const BORDER_TOP = '#47423D';
-const ACTIVE_COLOR = '#F77F00'; // Naranja oficial (contraste 5.05:1)
-const INACTIVE_COLOR = '#D0CBC5'; // Gris claro visible (contraste 9.8:1)
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 type TabKey = 'inicio' | 'explorar' | 'tickets' | 'cuenta';
 
@@ -27,12 +23,13 @@ interface HomeFooterProps {
  * Barra de navegación inferior fija (Sticky Bottom Navigation Bar).
  *
  * Siempre presente en la parte inferior de la pantalla. Contiene accesos directos
- * a Inicio, Explorar, Tickets y Cuenta con iconos SVG nativos (react-native-svg)
- * de alto contraste sobre fondo institucional `#332F2B`.
+ * a Inicio, Explorar, Tickets y Cuenta con iconos SVG nativos adaptados
+ * al tema claro y oscuro con alto contraste (WCAG AA/AAA).
  */
 export function HomeFooter({ onPressHome }: HomeFooterProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
 
   function handleTabPress(tab: TabKey) {
@@ -50,8 +47,20 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
     }
   }
 
+  const activeColor = colors.footerActive;
+  const inactiveColor = colors.footerInactive;
+
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.footerBg,
+          borderTopColor: colors.footerBorder,
+          paddingBottom: Math.max(insets.bottom, 8),
+        },
+      ]}
+    >
       {/* Botón 1: Inicio */}
       <TouchableOpacity
         style={styles.tabButton}
@@ -63,13 +72,14 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
       >
         <HomeIcon
           size={22}
-          color={activeTab === 'inicio' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          color={activeTab === 'inicio' ? activeColor : inactiveColor}
           style={styles.icon}
         />
         <Text
           style={[
             styles.label,
-            activeTab === 'inicio' ? styles.labelActive : styles.labelInactive,
+            { color: activeTab === 'inicio' ? activeColor : inactiveColor },
+            activeTab === 'inicio' && styles.labelActive,
           ]}
         >
           Inicio
@@ -87,13 +97,14 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
       >
         <ExploreIcon
           size={22}
-          color={activeTab === 'explorar' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          color={activeTab === 'explorar' ? activeColor : inactiveColor}
           style={styles.icon}
         />
         <Text
           style={[
             styles.label,
-            activeTab === 'explorar' ? styles.labelActive : styles.labelInactive,
+            { color: activeTab === 'explorar' ? activeColor : inactiveColor },
+            activeTab === 'explorar' && styles.labelActive,
           ]}
         >
           Explorar
@@ -111,13 +122,14 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
       >
         <TicketsIcon
           size={22}
-          color={activeTab === 'tickets' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          color={activeTab === 'tickets' ? activeColor : inactiveColor}
           style={styles.icon}
         />
         <Text
           style={[
             styles.label,
-            activeTab === 'tickets' ? styles.labelActive : styles.labelInactive,
+            { color: activeTab === 'tickets' ? activeColor : inactiveColor },
+            activeTab === 'tickets' && styles.labelActive,
           ]}
         >
           Tickets
@@ -135,13 +147,14 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
       >
         <AccountIcon
           size={22}
-          color={activeTab === 'cuenta' ? ACTIVE_COLOR : INACTIVE_COLOR}
+          color={activeTab === 'cuenta' ? activeColor : inactiveColor}
           style={styles.icon}
         />
         <Text
           style={[
             styles.label,
-            activeTab === 'cuenta' ? styles.labelActive : styles.labelInactive,
+            { color: activeTab === 'cuenta' ? activeColor : inactiveColor },
+            activeTab === 'cuenta' && styles.labelActive,
           ]}
         >
           Cuenta
@@ -155,9 +168,7 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: BAR_BG,
     borderTopWidth: 1,
-    borderTopColor: BORDER_TOP,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -181,13 +192,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 11,
     letterSpacing: 0.2,
+    fontWeight: '500',
   },
   labelActive: {
-    color: ACTIVE_COLOR,
     fontWeight: '700',
-  },
-  labelInactive: {
-    color: INACTIVE_COLOR,
-    fontWeight: '500',
   },
 });
