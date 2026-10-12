@@ -1,14 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -63,6 +65,29 @@ export default function CheckoutScreen() {
 
   const [event, setEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const [stepContentY, setStepContentY] = useState(0);
+
+  function handleScrollToInput(fieldOffset: number) {
+    const targetY = Math.max(0, stepContentY + fieldOffset - 80);
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: targetY, animated: true });
+    }, 120);
+  }
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, () => setIsKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvent, () => setIsKeyboardVisible(false));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // Parseo de parámetros
   const ticketQuantities: Record<string, number> = useMemo(() => {
@@ -270,10 +295,16 @@ export default function CheckoutScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
+          ref={scrollRef}
           style={[styles.scroll, { backgroundColor: colors.screenBg }]}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            isKeyboardVisible && { paddingBottom: 360 },
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
         >
           {/* Hero superior que persiste según especificación */}
           <EventHero event={event} />
@@ -284,36 +315,40 @@ export default function CheckoutScreen() {
           {/* Temporizador de compra */}
           <CheckoutTimer initialSeconds={600} onExpire={handleTimerExpired} />
 
-          {/* PASO 1: Revisá tu Orden */}
-          {currentStep === 1 && (
-            <OrderSummaryStep
-              event={event}
-              tickets={cartTickets}
-              parkingVehicles={addedVehicles}
-              pricing={pricing}
-              onNext={handleNextFromSummary}
-              onBack={handleBackFromSummary}
-            />
-          )}
+          {/* Contenedor de pasos de checkout con tracking de layout para auto-scroll */}
+          <View onLayout={(e) => setStepContentY(e.nativeEvent.layout.y)}>
+            {/* PASO 1: Revisá tu Orden */}
+            {currentStep === 1 && (
+              <OrderSummaryStep
+                event={event}
+                tickets={cartTickets}
+                parkingVehicles={addedVehicles}
+                pricing={pricing}
+                onNext={handleNextFromSummary}
+                onBack={handleBackFromSummary}
+              />
+            )}
 
-          {/* PASO 2: Ingresá tus datos */}
-          {currentStep === 2 && (
-            <BuyerFormStep
-              initialData={buyerData}
-              onSubmit={handleBuyerSubmit}
-              onBack={handleBackFromBuyer}
-            />
-          )}
+            {/* PASO 2: Ingresá tus datos */}
+            {currentStep === 2 && (
+              <BuyerFormStep
+                initialData={buyerData}
+                onSubmit={handleBuyerSubmit}
+                onBack={handleBackFromBuyer}
+                onFocusField={handleScrollToInput}
+              />
+            )}
 
-          {/* PASO 3: Datos de asistentes (Condicional) */}
-          {isAttendeesStep && (
-            <AttendeesFormStep
-              tickets={cartTickets}
-              initialAttendees={attendeesData}
-              onSubmit={handleAttendeesSubmit}
-              onBack={handleBackFromAttendees}
-            />
-          )}
+            {/* PASO 3: Datos de asistentes (Condicional) */}
+            {isAttendeesStep && (
+              <AttendeesFormStep
+                tickets={cartTickets}
+                initialAttendees={attendeesData}
+                onSubmit={handleAttendeesSubmit}
+                onBack={handleBackFromAttendees}
+              />
+            )}
+          </View>
 
           {/* PASO FINAL: Confirmar compra */}
           {isConfirmationStep && (

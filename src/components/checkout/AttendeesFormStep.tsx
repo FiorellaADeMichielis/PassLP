@@ -163,6 +163,8 @@ export function AttendeesFormStep({
                       handleFieldChange(att.id, 'firstName', val)
                     }
                     autoCapitalize="words"
+                    autoCorrect={false}
+                    returnKeyType="next"
                   />
                   {attErr.firstName ? (
                     <Text style={styles.errorText}>{attErr.firstName}</Text>
@@ -182,6 +184,8 @@ export function AttendeesFormStep({
                       handleFieldChange(att.id, 'lastName', val)
                     }
                     autoCapitalize="words"
+                    autoCorrect={false}
+                    returnKeyType="next"
                   />
                   {attErr.lastName ? (
                     <Text style={styles.errorText}>{attErr.lastName}</Text>
@@ -201,6 +205,7 @@ export function AttendeesFormStep({
                   onChangeText={(val) => handleFieldChange(att.id, 'dni', val)}
                   keyboardType="numeric"
                   maxLength={10}
+                  returnKeyType="next"
                 />
                 {attErr.dni ? (
                   <Text style={styles.errorText}>{attErr.dni}</Text>

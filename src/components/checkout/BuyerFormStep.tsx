@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   FlatList,
   Modal,
@@ -66,6 +66,7 @@ interface BuyerFormStepProps {
   initialData: BuyerData;
   onSubmit: (data: BuyerData) => void;
   onBack: () => void;
+  onFocusField?: (offset: number) => void;
 }
 
 /**
@@ -78,10 +79,17 @@ export function BuyerFormStep({
   initialData,
   onSubmit,
   onBack,
+  onFocusField,
 }: BuyerFormStepProps) {
   const [formData, setFormData] = useState<BuyerData>(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showProvinceModal, setShowProvinceModal] = useState(false);
+
+  const lastNameRef = useRef<TextInput>(null);
+  const dniRef = useRef<TextInput>(null);
+  const phoneRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const confirmEmailRef = useRef<TextInput>(null);
 
   function handleChange(field: keyof BuyerData, rawValue: string | boolean) {
     let processedValue = rawValue;
@@ -190,6 +198,11 @@ export function BuyerFormStep({
               value={formData.firstName}
               onChangeText={(val) => handleChange('firstName', val)}
               autoCapitalize="words"
+              autoCorrect={false}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={() => onFocusField?.(30)}
+              onSubmitEditing={() => lastNameRef.current?.focus()}
             />
             {errors.firstName && (
               <Text style={styles.errorText}>{errors.firstName}</Text>
@@ -201,12 +214,18 @@ export function BuyerFormStep({
               Apellido <Text style={styles.req}>*</Text>
             </Text>
             <TextInput
+              ref={lastNameRef}
               style={[styles.input, errors.lastName && styles.inputError]}
               placeholder="Pérez"
               placeholderTextColor="#999999"
               value={formData.lastName}
               onChangeText={(val) => handleChange('lastName', val)}
               autoCapitalize="words"
+              autoCorrect={false}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={() => onFocusField?.(30)}
+              onSubmitEditing={() => dniRef.current?.focus()}
             />
             {errors.lastName && (
               <Text style={styles.errorText}>{errors.lastName}</Text>
@@ -221,6 +240,7 @@ export function BuyerFormStep({
               DNI <Text style={styles.req}>*</Text>
             </Text>
             <TextInput
+              ref={dniRef}
               style={[styles.input, errors.dni && styles.inputError]}
               placeholder="12.345.678"
               placeholderTextColor="#999999"
@@ -228,6 +248,10 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('dni', val)}
               keyboardType="numeric"
               maxLength={10}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={() => onFocusField?.(110)}
+              onSubmitEditing={() => phoneRef.current?.focus()}
             />
             {errors.dni && <Text style={styles.errorText}>{errors.dni}</Text>}
           </View>
@@ -237,6 +261,7 @@ export function BuyerFormStep({
               Teléfono <Text style={styles.req}>*</Text>
             </Text>
             <TextInput
+              ref={phoneRef}
               style={[styles.input, errors.phone && styles.inputError]}
               placeholder="11 2345-6789"
               placeholderTextColor="#999999"
@@ -244,6 +269,10 @@ export function BuyerFormStep({
               onChangeText={(val) => handleChange('phone', val)}
               keyboardType="phone-pad"
               maxLength={16}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={() => onFocusField?.(110)}
+              onSubmitEditing={() => emailRef.current?.focus()}
             />
             {errors.phone && (
               <Text style={styles.errorText}>{errors.phone}</Text>
@@ -282,6 +311,7 @@ export function BuyerFormStep({
               Email <Text style={styles.req}>*</Text>
             </Text>
             <TextInput
+              ref={emailRef}
               style={[styles.input, errors.email && styles.inputError]}
               placeholder="juan@ejemplo.com"
               placeholderTextColor="#999999"
@@ -290,6 +320,10 @@ export function BuyerFormStep({
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={() => onFocusField?.(190)}
+              onSubmitEditing={() => confirmEmailRef.current?.focus()}
             />
             {errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -303,6 +337,7 @@ export function BuyerFormStep({
             Confirmar Email <Text style={styles.req}>*</Text>
           </Text>
           <TextInput
+            ref={confirmEmailRef}
             style={[styles.input, errors.confirmEmail && styles.inputError]}
             placeholder="juan@ejemplo.com"
             placeholderTextColor="#999999"
@@ -311,6 +346,9 @@ export function BuyerFormStep({
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            returnKeyType="done"
+            onFocus={() => onFocusField?.(270)}
+            onSubmitEditing={handleNext}
           />
           {errors.confirmEmail && (
             <Text style={styles.errorText}>{errors.confirmEmail}</Text>
