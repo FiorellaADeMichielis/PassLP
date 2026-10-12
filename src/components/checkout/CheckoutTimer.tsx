@@ -19,17 +19,19 @@ export function CheckoutTimer({
   initialSeconds = 600,
   onExpire,
 }: CheckoutTimerProps) {
-  const targetTimeRef = useRef<number>(Date.now() + initialSeconds * 1000);
-  const onExpireRef = useRef(onExpire);
-  onExpireRef.current = onExpire;
-
+  const [targetTime] = useState(() => Date.now() + initialSeconds * 1000);
   const [secondsLeft, setSecondsLeft] = useState<number>(initialSeconds);
+  const onExpireRef = useRef(onExpire);
+
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
 
   useEffect(() => {
     function updateTime() {
       const remaining = Math.max(
         0,
-        Math.ceil((targetTimeRef.current - Date.now()) / 1000)
+        Math.ceil((targetTime - Date.now()) / 1000)
       );
       setSecondsLeft(remaining);
 
@@ -56,7 +58,7 @@ export function CheckoutTimer({
       clearInterval(interval);
       subscription.remove();
     };
-  }, []);
+  }, [targetTime]);
 
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
