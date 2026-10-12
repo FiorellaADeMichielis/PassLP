@@ -54,7 +54,7 @@ export interface EventItem {
   dateShort: string; // "31/10/2026"
   time: string; // "21:00 hs"
   venue: Venue;
-  flyerUrl: string;
+  flyerUrl: string | number;
   heroBgColors: [string, string];
   about: string;
   isFeatured: boolean;

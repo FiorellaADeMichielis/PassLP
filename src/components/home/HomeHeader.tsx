@@ -1,17 +1,12 @@
+import { Image } from 'expo-image';
 import { Href, useRouter } from 'expo-router';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { SearchIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 
-// ─── Colores de diseño (según PASSLP_REFERENCIA.md §2.1 y §9.1) ─────────────
-const HEADER_BG = '#332F2B';
-const SEARCH_BG = '#FFFFFF';
-const SEARCH_PLACEHOLDER = '#999999';
-const SEARCH_TEXT = '#1A1A1A';
-const BTN_INGRESAR_BG = '#000000';
-const BTN_INGRESAR_TEXT = '#FFFFFF';
-const LOGO_TEXT_COLOR = '#F77F00'; // Naranja corporativo PASSLP
+
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface HomeHeaderProps {
@@ -26,29 +21,41 @@ interface HomeHeaderProps {
 /**
  * Cabecera de la pantalla principal.
  *
- * Contiene (de izquierda a derecha): logotipo en naranja institucional, buscador en píldora blanca
- * con icono SVG vectorial nativo (react-native-svg) y botón "Ingresar" en píldora negra.
- * Fondo oscuro `#332F2B` según referencia PASSLP.
+ * Contiene (de izquierda a derecha): logotipo corporativo adaptativo (claro u oscuro),
+ * buscador en píldora con icono SVG vectorial nativo y botón "Ingresar".
+ * Se adapta automáticamente al tema del teléfono para garantizar contraste óptimo.
  */
 export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
   const router = useRouter();
+  const { colors } = useAppTheme();
 
   return (
-    <View style={styles.container}>
-      {/* Logotipo */}
-      <Text style={styles.logo} accessibilityRole="header">
-        PassLP
-      </Text>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.headerBg,
+          borderBottomColor: colors.headerBorder,
+        },
+      ]}
+    >
+      {/* Logotipo oficial sobre fondo oscuro */}
+      <Image
+        source={require('@/assets/images/logo-on-dark.png')}
+        style={styles.logoImage}
+        contentFit="contain"
+        accessibilityLabel="Logotipo PassLP"
+      />
 
       {/* Buscador */}
-      <View style={styles.searchWrapper}>
-        <SearchIcon size={15} color="#332F2B" style={styles.searchIcon} />
+      <View style={[styles.searchWrapper, { backgroundColor: colors.searchBg }]}>
+        <SearchIcon size={15} color={colors.searchIcon} style={styles.searchIcon} />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.searchInput }]}
           value={searchQuery}
           onChangeText={onSearchChange}
           placeholder="Buscar Evento"
-          placeholderTextColor={SEARCH_PLACEHOLDER}
+          placeholderTextColor={colors.searchPlaceholder}
           returnKeyType="search"
           clearButtonMode="while-editing"
           accessibilityLabel="Buscador de eventos"
@@ -57,12 +64,14 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
 
       {/* Botón Ingresar */}
       <TouchableOpacity
-        style={styles.btnIngresar}
+        style={[styles.btnIngresar, { backgroundColor: colors.btnIngresarBg }]}
         onPress={() => router.push('/login' as unknown as Href)}
         accessibilityRole="button"
         accessibilityLabel="Ingresar a tu cuenta"
       >
-        <Text style={styles.btnIngresarText}>Ingresar</Text>
+        <Text style={[styles.btnIngresarText, { color: colors.btnIngresarText }]}>
+          Ingresar
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -72,25 +81,21 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: HEADER_BG,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two + 4,
     gap: Spacing.two,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  logo: {
-    color: LOGO_TEXT_COLOR,
-    fontSize: 18,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-    minWidth: 68,
+  logoImage: {
+    width: 84,
+    height: 28,
   },
   searchWrapper: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: SEARCH_BG,
     borderRadius: 999,
     paddingHorizontal: Spacing.two + 4,
     paddingVertical: Spacing.one + 2,
@@ -104,18 +109,15 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 13,
-    color: SEARCH_TEXT,
     padding: 0,
     margin: 0,
   },
   btnIngresar: {
-    backgroundColor: BTN_INGRESAR_BG,
     borderRadius: 999,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
   },
   btnIngresarText: {
-    color: BTN_INGRESAR_TEXT,
     fontSize: 12,
     fontWeight: '600',
   },

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 import { AttendeesFormStep } from '@/components/checkout/AttendeesFormStep';
 import { BuyerFormStep } from '@/components/checkout/BuyerFormStep';
@@ -21,6 +22,7 @@ import { OrderSummaryStep } from '@/components/checkout/OrderSummaryStep';
 import { PaymentSuccessModal } from '@/components/checkout/PaymentSuccessModal';
 import { EventHero } from '@/components/event/EventHero';
 import { Spacing } from '@/constants/theme';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { checkoutService } from '@/services/checkoutService';
 import { eventsService } from '@/services/eventsService';
 import {
@@ -52,6 +54,7 @@ const INITIAL_BUYER_DATA: BuyerData = {
  */
 export default function CheckoutScreen() {
   const router = useRouter();
+  const { colors } = useAppTheme();
   const { id, tickets: rawTickets, vehicles: rawVehicles } = useLocalSearchParams<{
     id: string;
     tickets?: string;
@@ -161,7 +164,11 @@ export default function CheckoutScreen() {
   }
 
   function handleBackFromSummary() {
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace(event ? `/event/${event.id}` : '/');
+    }
   }
 
   function handleBuyerSubmit(data: BuyerData) {
@@ -253,15 +260,17 @@ export default function CheckoutScreen() {
     : currentStep === 4;
 
   const isAttendeesStep = !buyerData.allTicketsSameName && currentStep === 3;
+  const [bgStart] = event?.heroBgColors || ['#1E1A18', '#100D0B'];
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgStart }]} edges={['top']}>
+      <StatusBar style="light" />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          style={styles.scroll}
+          style={[styles.scroll, { backgroundColor: colors.screenBg }]}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"

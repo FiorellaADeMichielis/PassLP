@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { EventItem } from '@/types';
+import { resolveFlyerSource } from '@/utils/imageUtils';
 
 interface EventHeroProps {
   /** Evento actual para renderizar el bloque Hero. */
@@ -33,7 +34,13 @@ export function EventHero({ event }: EventHeroProps) {
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/');
+            }
+          }}
           accessibilityRole="button"
           accessibilityLabel="Volver a la pantalla anterior"
         >
@@ -41,7 +48,12 @@ export function EventHero({ event }: EventHeroProps) {
           <Text style={styles.backText}>Volver</Text>
         </TouchableOpacity>
 
-        <Text style={styles.topLogo}>PassLP</Text>
+        <Image
+          source={require('@/assets/images/logo-on-dark.png')}
+          style={styles.topLogoImage}
+          contentFit="contain"
+          accessibilityLabel="Logotipo PassLP"
+        />
 
         <View style={styles.placeholderRight} />
       </View>
@@ -51,7 +63,7 @@ export function EventHero({ event }: EventHeroProps) {
         {/* Flyer central */}
         <View style={styles.flyerWrapper}>
           <Image
-            source={{ uri: event.flyerUrl }}
+            source={resolveFlyerSource(event.flyerUrl)}
             style={styles.flyer}
             contentFit="cover"
             accessibilityLabel={`Flyer oficial de ${event.title}`}
@@ -115,11 +127,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  topLogo: {
-    color: '#F77F00',
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+  topLogoImage: {
+    width: 80,
+    height: 24,
   },
   placeholderRight: {
     width: 60,
