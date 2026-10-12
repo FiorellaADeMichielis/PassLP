@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { usePathname, useRouter } from 'expo-router';
 
 import {
   AccountIcon,
@@ -8,17 +8,14 @@ import {
   HomeIcon,
   TicketsIcon,
 } from '@/components/ui/Icons';
-
 import { useAppTheme } from '@/hooks/useAppTheme';
-
-import { useRouter } from 'expo-router';
 
 type TabKey = 'inicio' | 'explorar' | 'tickets' | 'cuenta';
 
 interface HomeFooterProps {
   /** Callback opcional al presionar Inicio (por ej. scrollear al tope). */
   onPressHome?: () => void;
-  /** Pestaña activa actual (por defecto 'inicio'). */
+  /** Pestaña activa forzada si se desea omitir la detección automática por ruta. */
   currentTab?: TabKey;
 }
 
@@ -29,16 +26,20 @@ interface HomeFooterProps {
  * a Inicio, Explorar, Tickets y Cuenta con iconos SVG nativos adaptados
  * al tema claro y oscuro con alto contraste (WCAG AA/AAA).
  */
-export function HomeFooter({ onPressHome, currentTab = 'inicio' }: HomeFooterProps) {
+export function HomeFooter({ onPressHome, currentTab }: HomeFooterProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
-  const [activeTab, setActiveTab] = useState<TabKey>(currentTab);
+
+  // Se deriva la pestaña activa dinámicamente de la ruta para que al volver
+  // atrás con gestos o botón nativo de Android, se resincronice inmediatamente.
+  const isAccountRoute = pathname.includes('/account') || pathname === '/account';
+  const activeTab: TabKey = currentTab ?? (isAccountRoute ? 'cuenta' : 'inicio');
 
   function handleTabPress(tab: TabKey) {
     if (tab === 'inicio') {
-      setActiveTab('inicio');
-      if (currentTab === 'inicio') {
+      if (activeTab === 'inicio') {
         if (onPressHome) onPressHome();
       } else {
         router.replace('/');
@@ -48,8 +49,7 @@ export function HomeFooter({ onPressHome, currentTab = 'inicio' }: HomeFooterPro
     } else if (tab === 'tickets') {
       Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
     } else if (tab === 'cuenta') {
-      setActiveTab('cuenta');
-      if (currentTab !== 'cuenta') {
+      if (activeTab !== 'cuenta') {
         router.push('/account');
       }
     }
