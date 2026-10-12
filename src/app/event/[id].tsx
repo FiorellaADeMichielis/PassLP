@@ -148,9 +148,12 @@ export default function EventDetailScreen() {
   // ── Render de estados de carga y error ──────────────────────────────────────
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
+      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.screenBg }]} edges={['top']}>
+        <StatusBar style={colors.statusBarStyle} />
         <ActivityIndicator size="large" color="#F77F00" />
-        <Text style={styles.loadingText}>Cargando evento...</Text>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          Cargando evento...
+        </Text>
       </SafeAreaView>
     );
   }

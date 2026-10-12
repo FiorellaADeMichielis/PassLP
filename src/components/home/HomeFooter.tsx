@@ -11,11 +11,15 @@ import {
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 
+import { useRouter } from 'expo-router';
+
 type TabKey = 'inicio' | 'explorar' | 'tickets' | 'cuenta';
 
 interface HomeFooterProps {
   /** Callback opcional al presionar Inicio (por ej. scrollear al tope). */
   onPressHome?: () => void;
+  /** Pestaña activa actual (por defecto 'inicio'). */
+  currentTab?: TabKey;
 }
 
 /**
@@ -25,24 +29,29 @@ interface HomeFooterProps {
  * a Inicio, Explorar, Tickets y Cuenta con iconos SVG nativos adaptados
  * al tema claro y oscuro con alto contraste (WCAG AA/AAA).
  */
-export function HomeFooter({ onPressHome }: HomeFooterProps) {
+export function HomeFooter({ onPressHome, currentTab = 'inicio' }: HomeFooterProps) {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
-  const [activeTab, setActiveTab] = useState<TabKey>('inicio');
+  const [activeTab, setActiveTab] = useState<TabKey>(currentTab);
 
   function handleTabPress(tab: TabKey) {
     if (tab === 'inicio') {
       setActiveTab('inicio');
-      if (onPressHome) onPressHome();
+      if (currentTab === 'inicio') {
+        if (onPressHome) onPressHome();
+      } else {
+        router.replace('/');
+      }
     } else if (tab === 'explorar') {
-      setActiveTab('inicio');
       Alert.alert('Explorar', 'La sección de exploración estará disponible próximamente.');
     } else if (tab === 'tickets') {
-      setActiveTab('inicio');
       Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
     } else if (tab === 'cuenta') {
-      setActiveTab('inicio');
-      Alert.alert('Mi Cuenta', 'El inicio de sesión y gestión de cuenta estarán disponibles próximamente.');
+      setActiveTab('cuenta');
+      if (currentTab !== 'cuenta') {
+        router.push('/account');
+      }
     }
   }
 

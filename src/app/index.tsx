@@ -176,12 +176,17 @@ export default function HomeScreen() {
 
         {/* Grilla de eventos */}
         {loading ? (
-          <ActivityIndicator
-            size="large"
-            color="#E85D04"
-            style={styles.loader}
-            accessibilityLabel="Cargando eventos"
-          />
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator
+              size="large"
+              color="#F77F00"
+              style={styles.loader}
+              accessibilityLabel="Cargando eventos"
+            />
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+              Cargando cartelera de eventos...
+            </Text>
+          </View>
         ) : (
           <FlatList
             data={events}
@@ -234,8 +239,18 @@ const styles = StyleSheet.create({
   cardWrapper: {
     flex: 1,
   },
+  loaderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+    gap: 12,
+  },
   loader: {
-    marginVertical: 40,
+    marginBottom: 4,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
   emptyState: {
     alignItems: 'center',

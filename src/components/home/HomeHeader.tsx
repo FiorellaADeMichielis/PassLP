@@ -1,10 +1,9 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { SearchIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
-
-
 import { useAppTheme } from '@/hooks/useAppTheme';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -25,6 +24,7 @@ interface HomeHeaderProps {
  * Se adapta automáticamente al tema del teléfono para garantizar contraste óptimo.
  */
 export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
+  const router = useRouter();
   const { colors } = useAppTheme();
 
   return (
@@ -63,9 +63,7 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
       {/* Botón Ingresar */}
       <TouchableOpacity
         style={[styles.btnIngresar, { backgroundColor: colors.btnIngresarBg }]}
-        onPress={() =>
-          Alert.alert('Ingresar', 'El inicio de sesión estará disponible próximamente.')
-        }
+        onPress={() => router.push('/account')}
         accessibilityRole="button"
         accessibilityLabel="Ingresar a tu cuenta"
       >

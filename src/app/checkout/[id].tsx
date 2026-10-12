@@ -258,9 +258,12 @@ export default function CheckoutScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.centerContainer}>
+      <SafeAreaView style={[styles.centerContainer, { backgroundColor: colors.screenBg }]} edges={['top']}>
+        <StatusBar style={colors.statusBarStyle} />
         <ActivityIndicator size="large" color="#F77F00" />
-        <Text style={styles.loadingText}>Cargando proceso de compra...</Text>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          Cargando proceso de compra...
+        </Text>
       </SafeAreaView>
     );
   }
