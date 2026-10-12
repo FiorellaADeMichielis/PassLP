@@ -32,6 +32,7 @@ import { EventCategory, EventItem } from '@/types';
 export default function HomeScreen() {
   const { colors } = useAppTheme();
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<EventCategory>('Todas');
   const [categories, setCategories] = useState<EventCategory[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -39,6 +40,15 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+
+  // ── Debounce de búsqueda (250ms) ──────────────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // ── Carga inicial: categorías y eventos destacados ─────────────────────────
   useEffect(() => {
@@ -53,14 +63,14 @@ export default function HomeScreen() {
     bootstrap();
   }, []);
 
-  // ── Carga de eventos al cambiar filtros ────────────────────────────────────
+  // ── Carga de eventos al cambiar filtros o debounced query ─────────────────
   useEffect(() => {
     let isMounted = true;
 
     eventsService
       .getEvents(
         selectedCategory === 'Todas' ? undefined : selectedCategory,
-        searchQuery.trim() || undefined,
+        debouncedQuery.trim() || undefined,
       )
       .then((result) => {
         if (isMounted) {
@@ -72,7 +82,7 @@ export default function HomeScreen() {
     return () => {
       isMounted = false;
     };
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, debouncedQuery]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   function handleCategorySelect(category: EventCategory) {
