@@ -11,6 +11,7 @@ import {
 import { ParkingBadgeIcon, TrashIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { ParkingOption, ParkingVehicle, VehicleType } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 
 interface ParkingSectionProps {
   /** Opciones de tarifas de estacionamiento del evento. */
@@ -88,15 +89,7 @@ export function ParkingSection({
     setModel('');
   }
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-    })
-      .format(price)
-      .replace('ARS', '$')
-      .trim();
+  const formatPrice = formatCurrency;
 
   return (
     <View style={styles.container}>

@@ -6,6 +6,7 @@ import { PinIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { EventItem } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 import { resolveFlyerSource } from '@/utils/imageUtils';
 
 const BUY_BTN_BG = '#E85D04';
@@ -108,17 +109,9 @@ export function EventCard({ event, onPress }: EventCardProps) {
           {event.ticketTiers.length > 0 && (
             <Text
               style={[styles.price, { color: colors.textPrimary }]}
-              maxFontSizeMultiplier={1.3}
-            >
+              maxFontSizeMultiplier={1.3}>
               {'Desde '}
-              {new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                maximumFractionDigits: 0,
-              })
-                .format(Math.min(...event.ticketTiers.map((t) => t.price)))
-                .replace('ARS', '$')
-                .trim()}
+              {formatCurrency(Math.min(...event.ticketTiers.map((t) => t.price)))}
             </Text>
           )}
           <TouchableOpacity

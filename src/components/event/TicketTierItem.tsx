@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MinusIcon, PlusIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { TicketTier } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 
 interface TicketTierItemProps {
   /** Lote o categoría de ticket. */
@@ -39,14 +40,7 @@ export function TicketTierItem({
     }
   }
 
-  const formattedPrice = new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
-  })
-    .format(tier.price)
-    .replace('ARS', '$')
-    .trim();
+  const formattedPrice = formatCurrency(tier.price);
 
   return (
     <View style={styles.container}>

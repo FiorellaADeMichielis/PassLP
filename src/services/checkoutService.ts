@@ -1,4 +1,5 @@
 import { CartTicketItem, OrderPricing, ParkingVehicle } from '../types';
+import { formatCurrency } from '../utils/formatters';
 
 const SERVICE_FEE_RATE = 0.15; // 15% según referencia PASSLP
 
@@ -18,14 +19,5 @@ export const checkoutService = {
     };
   },
 
-  formatCurrency(amount: number): string {
-    const formatted = new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-    }).format(amount);
-
-    // Adapta "$ 10.000" al estilo visual visto en la referencia
-    return formatted.replace('ARS', '$').trim();
-  },
+  formatCurrency,
 };

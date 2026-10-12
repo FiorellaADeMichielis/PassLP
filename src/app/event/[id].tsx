@@ -22,6 +22,7 @@ import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services/eventsService';
 import { EventItem, ParkingVehicle } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 
 // ─── Colores según PASSLP_REFERENCIA.md §3.2, §3.4 y §9.1 ───────────────────
 const BTN_CONTINUAR_ACTIVE_BG = '#54C1C3'; // Teal activo PASSLP
@@ -143,16 +144,6 @@ export default function EventDetailScreen() {
       },
     });
   }
-
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      maximumFractionDigits: 0,
-    })
-      .format(amount)
-      .replace('ARS', '$')
-      .trim();
 
   // ── Render de estados de carga y error ──────────────────────────────────────
   if (loading) {
