@@ -35,7 +35,7 @@ export const MOCK_EVENTS: EventItem[] = [
       city: 'La Plata',
       province: 'Buenos Aires',
     },
-    flyerUrl: require('@/assets/images/flyers/ARMYFEST_STORIES.png'),
+    flyerUrl: require('@/assets/events/flyers/ARMYFEST_STORIES.png'),
     heroBgColors: ['#1E0F2E', '#3D1C59'],
     about:
       'Finalmente BTS viene a la Argentina y se celebra A LO GRANDE! Después del Show del 24/10 en La Plata, nos vamos directo a la ARMYFEST - AFTER PARTY donde vamos a seguir festejando, cantando y bailando las canciones de BTS que tanto amamos junto a otrxs ARMY!\n\n💜SÁBADO 24/10 - Puertas abiertas a partir de las 23hs! En @hipico.musicbar , Av.52, entre 118 y 119, Paseo del Bosque, La Plata. 💜Fiesta para mayores de 18 años (llevar DNI físico o desde la app Mi Argentina)\n\nFIESTA FULL BTS - Proyección de videos - Todo ARIRANG y lo mejor de su discografía Stores K-pop y BTS - Stand de Fotos - Sorteos ÁLBUMES BTS! Lxs esperamos el 24/10 en la FIESTA DE BTS en La Plata IG: @cypher4kpop',
@@ -80,7 +80,7 @@ export const MOCK_EVENTS: EventItem[] = [
       city: 'La Plata',
       province: 'Buenos Aires',
     },
-    flyerUrl: require('@/assets/images/flyers/1791065209558-fiesta_vete_09_10.jpeg'),
+    flyerUrl: require('@/assets/events/flyers/1791065209558-fiesta_vete_09_10.jpeg'),
     heroBgColors: ['#181512', '#2E221B'],
     about:
       'FIESTA VETE Lugar: Club Hipico, avenida 52 entre 118 y 119. La Plata, Buenos Aires. Entrada a partir de la 1 y valida hasta 2:30 am. Únicamente mayores de 18 años.\n\nENTRADA VALIDA HASTA 2:30 AM',
@@ -115,7 +115,7 @@ export const MOCK_EVENTS: EventItem[] = [
       city: 'La Plata',
       province: 'Buenos Aires',
     },
-    flyerUrl: require('@/assets/images/flyers/1789494268130-500x500_halloween.jpg.jpeg'),
+    flyerUrl: require('@/assets/events/flyers/1789494268130-500x500_halloween.jpg.jpeg'),
     heroBgColors: ['#100809', '#290F0E'],
     about:
       'Un lugar con espacio al aire libre y espacios techados ubicado en el bosque de la plata.\n\nav.52 entre 118 y 119 paseo del bosque, LA PLATA, BUENOS AIRES, ARGENTINA\n\nSobre el evento:\nDRESSCODE DISFRAZADO !!!!',
@@ -160,7 +160,7 @@ export const MOCK_EVENTS: EventItem[] = [
       city: 'La Plata',
       province: 'Buenos Aires',
     },
-    flyerUrl: require('@/assets/images/flyers/LARE_PRESENTA.jpg'),
+    flyerUrl: require('@/assets/events/flyers/LARE_PRESENTA.jpg'),
     heroBgColors: ['#131B26', '#1E324A'],
     about:
       'Un lugar con espacio al aire libre y espacios techados ubicado en el bosque de la plata.\n\nav.52 entre 118 y 119 paseo del bosque, LA PLATA, BUENOS AIRES, Argentina\n\nSobre el evento:\nbanda de cover en vivo.',
@@ -195,7 +195,7 @@ export const MOCK_EVENTS: EventItem[] = [
       city: 'La Plata',
       province: 'Buenos Aires',
     },
-    flyerUrl: require('@/assets/images/flyers/OdontoFest.jpeg'),
+    flyerUrl: require('@/assets/events/flyers/OdontoFest.jpeg'),
     heroBgColors: ['#151C18', '#22382D'],
     about:
       'ODONTO FEST Entrada a partir de la 1 y valida hasta 2:30 am. Únicamente mayores de 18 años',

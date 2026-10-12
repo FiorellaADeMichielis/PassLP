@@ -49,7 +49,7 @@ export function EventHero({ event }: EventHeroProps) {
         </TouchableOpacity>
 
         <Image
-          source={require('@/assets/images/logo-on-dark.png')}
+          source={require('@/assets/logo-on-dark.png')}
           style={styles.topLogoImage}
           contentFit="contain"
           accessibilityLabel="Logotipo PassLP"

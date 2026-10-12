@@ -41,7 +41,7 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
     >
       {/* Logotipo oficial sobre fondo oscuro */}
       <Image
-        source={require('@/assets/images/logo-on-dark.png')}
+        source={require('@/assets/logo-on-dark.png')}
         style={styles.logoImage}
         contentFit="contain"
         accessibilityLabel="Logotipo PassLP"

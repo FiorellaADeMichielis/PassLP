@@ -18,8 +18,8 @@ export function WebBadge() {
       <Image
         source={
           scheme === 'dark'
-            ? require('@/assets/images/expo-badge-white.png')
-            : require('@/assets/images/expo-badge.png')
+            ? require('@/assets/logo-on-dark.png')
+            : require('@/assets/logo.png')
         }
         style={styles.badgeImage}
       />
