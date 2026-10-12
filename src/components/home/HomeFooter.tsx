@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Href, useRouter } from 'expo-router';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -27,7 +26,6 @@ interface HomeFooterProps {
  * al tema claro y oscuro con alto contraste (WCAG AA/AAA).
  */
 export function HomeFooter({ onPressHome }: HomeFooterProps) {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
@@ -43,7 +41,8 @@ export function HomeFooter({ onPressHome }: HomeFooterProps) {
       setActiveTab('inicio');
       Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
     } else if (tab === 'cuenta') {
-      router.push('/login' as unknown as Href);
+      setActiveTab('inicio');
+      Alert.alert('Mi Cuenta', 'El inicio de sesión y gestión de cuenta estarán disponibles próximamente.');
     }
   }
 
