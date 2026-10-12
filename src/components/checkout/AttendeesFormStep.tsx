@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { cleanName, formatDNI } from './BuyerFormStep';
+import { cleanName, formatDNI } from '@/utils/validation';
 import { AttendeeData, CartTicketItem } from '@/types';
 
 interface AttendeesFormStepProps {

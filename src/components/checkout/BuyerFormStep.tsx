@@ -10,57 +10,21 @@ import {
 } from 'react-native';
 import { CheckIcon } from '../ui/Icons';
 import { BuyerData } from '@/types';
+import {
+  ARGENTINE_PROVINCES,
+  cleanName,
+  formatDNI,
+  formatPhone,
+  isValidEmail,
+} from '@/utils/validation';
 
-export const ARGENTINE_PROVINCES = [
-  'Buenos Aires',
-  'Ciudad Autónoma de Buenos Aires',
-  'Catamarca',
-  'Chaco',
-  'Chubut',
-  'Córdoba',
-  'Corrientes',
-  'Entre Ríos',
-  'Formosa',
-  'Jujuy',
-  'La Pampa',
-  'La Rioja',
-  'Mendoza',
-  'Misiones',
-  'Neuquén',
-  'Río Negro',
-  'Salta',
-  'San Juan',
-  'San Luis',
-  'Santa Cruz',
-  'Santa Fe',
-  'Santiago del Estero',
-  'Tierra del Fuego',
-  'Tucumán',
-];
-
-export function cleanName(text: string): string {
-  return text.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-}
-
-export function formatDNI(text: string): string {
-  const digits = text.replace(/\D/g, '').slice(0, 8);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
-}
-
-export function formatPhone(text: string): string {
-  const digits = text.replace(/\D/g, '').slice(0, 14);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 2)} ${digits.slice(2)}`;
-  if (digits.length <= 10) return `${digits.slice(0, 2)} ${digits.slice(2, 6)}-${digits.slice(6)}`;
-  return `${digits.slice(0, 2)} ${digits.slice(2, 6)}-${digits.slice(6, 10)} ${digits.slice(10)}`;
-}
-
-export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email.trim());
-}
+export {
+  ARGENTINE_PROVINCES,
+  cleanName,
+  formatDNI,
+  formatPhone,
+  isValidEmail,
+};
 
 interface BuyerFormStepProps {
   initialData: BuyerData;
