@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Alert,
   StyleSheet,
@@ -21,6 +21,10 @@ interface ParkingSectionProps {
   onAddVehicle: (vehicle: ParkingVehicle) => void;
   /** Callback para remover un vehículo agregado. */
   onRemoveVehicle: (id: string) => void;
+  /** Callback para auto-scrollear cuando el usuario hace foco en Patente. */
+  onFocusPlate?: () => void;
+  /** Callback para auto-scrollear cuando el usuario hace foco en Modelo. */
+  onFocusModel?: () => void;
 }
 
 const VEHICLE_TYPES: VehicleType[] = ['Sedán', 'Pickup'];
@@ -36,11 +40,14 @@ export function ParkingSection({
   addedVehicles,
   onAddVehicle,
   onRemoveVehicle,
+  onFocusPlate,
+  onFocusModel,
 }: ParkingSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedType, setSelectedType] = useState<VehicleType>('Sedán');
   const [plate, setPlate] = useState('');
   const [model, setModel] = useState('');
+  const modelInputRef = useRef<TextInput>(null);
 
   // Encuentra la tarifa para el tipo seleccionado o valor por defecto
   const currentOption = options.find((opt) => opt.vehicleType === selectedType);
@@ -161,16 +168,26 @@ export function ParkingSection({
               value={plate}
               onChangeText={setPlate}
               autoCapitalize="characters"
+              autoCorrect={false}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onFocus={onFocusPlate}
+              onSubmitEditing={() => modelInputRef.current?.focus()}
             />
 
             {/* Input Modelo */}
             <Text style={styles.inputLabel}>MODELO</Text>
             <TextInput
+              ref={modelInputRef}
               style={styles.input}
               placeholder="Ej. Toyota Hilux, Peugeot 208"
               placeholderTextColor="#999999"
               value={model}
               onChangeText={setModel}
+              autoCorrect={false}
+              returnKeyType="done"
+              onFocus={onFocusModel}
+              onSubmitEditing={handleAdd}
             />
 
             {/* Resumen del precio del vehículo y botón agregar */}

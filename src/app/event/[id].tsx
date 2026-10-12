@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -46,6 +49,35 @@ export default function EventDetailScreen() {
   // Estado del carrito temporal para este evento
   const [ticketQuantities, setTicketQuantities] = useState<Record<string, number>>({});
   const [addedVehicles, setAddedVehicles] = useState<ParkingVehicle[]>([]);
+
+  // Detección de teclado para evitar obstrucción en pantallas móviles
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const [bodyLayoutY, setBodyLayoutY] = useState(0);
+  const [parkingLayoutY, setParkingLayoutY] = useState(0);
+
+  function handleScrollToParkingInput(isModel = false) {
+    // Posiciona el input enfocado holgadamente por encima del teclado
+    const fieldOffset = isModel ? 270 : 180;
+    const targetY = Math.max(0, bodyLayoutY + parkingLayoutY + fieldOffset - 80);
+
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: targetY, animated: true });
+    }, 120);
+  }
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, () => setIsKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvent, () => setIsKeyboardVisible(false));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // ── Carga del evento ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -161,106 +193,127 @@ export default function EventDetailScreen() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: bgStart }]} edges={['top']}>
       <StatusBar style="light" />
-      <ScrollView
-        style={[styles.scroll, { backgroundColor: colors.screenBg }]}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* 1. Bloque Hero superior */}
-        <EventHero event={event} />
+        <ScrollView
+          ref={scrollRef}
+          style={[styles.scroll, { backgroundColor: colors.screenBg }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            isKeyboardVisible && { paddingBottom: 360 },
+          ]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
+        >
+          {/* 1. Bloque Hero superior */}
+          <EventHero event={event} />
 
-        <View style={[styles.body, { backgroundColor: colors.screenBg }]}>
-          {/* 2. Sección TICKETS */}
           <View
-            style={[
-              styles.ticketsSection,
-              { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
-            ]}
+            style={[styles.body, { backgroundColor: colors.screenBg }]}
+            onLayout={(e) => setBodyLayoutY(e.nativeEvent.layout.y)}
           >
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>TICKETS</Text>
-              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-                Selecciona la cantidad de entradas que deseas
-              </Text>
-            </View>
-
-            <View style={styles.tiersList}>
-              {event.ticketTiers.map((tier) => (
-                <TicketTierItem
-                  key={tier.id}
-                  tier={tier}
-                  quantity={ticketQuantities[tier.id] || 0}
-                  onChangeQuantity={(qty) => handleQuantityChange(tier.id, qty)}
-                />
-              ))}
-            </View>
-          </View>
-
-          {/* 3. Sección ESTACIONAMIENTO (si el evento lo ofrece) */}
-          {event.hasParking && event.parkingOptions && (
-            <ParkingSection
-              options={event.parkingOptions}
-              addedVehicles={addedVehicles}
-              onAddVehicle={handleAddVehicle}
-              onRemoveVehicle={handleRemoveVehicle}
-            />
-          )}
-
-          {/* 4. Sección SOBRE EL EVENTO */}
-          <EventAbout about={event.about} />
-        </View>
-      </ScrollView>
-
-      {/* 5. Barra inferior fija (Sticky Bottom Bar) con botón CONTINUAR */}
-      <View
-        style={[
-          styles.bottomBar,
-          {
-            backgroundColor: colors.cardBg,
-            borderTopColor: colors.cardBorder,
-            paddingBottom: Math.max(insets.bottom, 12),
-          },
-        ]}
-      >
-        <View style={styles.summaryRow}>
-          <View>
-            <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>
-              {totalTicketsCount > 0
-                ? `${totalTicketsCount} entrada${totalTicketsCount > 1 ? 's' : ''}`
-                : 'Selecciona tus entradas'}
-            </Text>
-            {totalTicketsCount > 0 && (
-              <Text style={[styles.summaryTotal, { color: colors.textPrimary }]}>
-                {formatCurrency(grandTotal)}
-              </Text>
-            )}
-          </View>
-
-          <TouchableOpacity
-            style={[
-              styles.continueButton,
-              canContinue
-                ? styles.continueButtonActive
-                : styles.continueButtonDisabled,
-            ]}
-            onPress={handleContinue}
-            disabled={!canContinue}
-            accessibilityRole="button"
-            accessibilityLabel="Continuar con la compra"
-          >
-            <Text
+            {/* 2. Sección TICKETS */}
+            <View
               style={[
-                styles.continueButtonText,
-                canContinue
-                  ? styles.continueButtonTextActive
-                  : styles.continueButtonTextDisabled,
+                styles.ticketsSection,
+                { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
               ]}
             >
-              CONTINUAR
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+              <View style={styles.sectionHeader}>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>TICKETS</Text>
+                <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+                  Selecciona la cantidad de entradas que deseas
+                </Text>
+              </View>
+
+              <View style={styles.tiersList}>
+                {event.ticketTiers.map((tier) => (
+                  <TicketTierItem
+                    key={tier.id}
+                    tier={tier}
+                    quantity={ticketQuantities[tier.id] || 0}
+                    onChangeQuantity={(qty) => handleQuantityChange(tier.id, qty)}
+                  />
+                ))}
+              </View>
+            </View>
+
+            {/* 3. Sección ESTACIONAMIENTO (si el evento lo ofrece) */}
+            {event.hasParking && event.parkingOptions && (
+              <View onLayout={(e) => setParkingLayoutY(e.nativeEvent.layout.y)}>
+                <ParkingSection
+                  options={event.parkingOptions}
+                  addedVehicles={addedVehicles}
+                  onAddVehicle={handleAddVehicle}
+                  onRemoveVehicle={handleRemoveVehicle}
+                  onFocusPlate={() => handleScrollToParkingInput(false)}
+                  onFocusModel={() => handleScrollToParkingInput(true)}
+                />
+              </View>
+            )}
+
+            {/* 4. Sección SOBRE EL EVENTO */}
+            <EventAbout about={event.about} />
+          </View>
+        </ScrollView>
+
+        {/* 5. Barra inferior fija (Sticky Bottom Bar) con botón CONTINUAR (se oculta al escribir para liberar el viewport) */}
+        {!isKeyboardVisible && (
+          <View
+            style={[
+              styles.bottomBar,
+              {
+                backgroundColor: colors.cardBg,
+                borderTopColor: colors.cardBorder,
+                paddingBottom: Math.max(insets.bottom, 12),
+              },
+            ]}
+          >
+            <View style={styles.summaryRow}>
+              <View>
+                <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>
+                  {totalTicketsCount > 0
+                    ? `${totalTicketsCount} entrada${totalTicketsCount > 1 ? 's' : ''}`
+                    : 'Selecciona tus entradas'}
+                </Text>
+                {totalTicketsCount > 0 && (
+                  <Text style={[styles.summaryTotal, { color: colors.textPrimary }]}>
+                    {formatCurrency(grandTotal)}
+                  </Text>
+                )}
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.continueButton,
+                  canContinue
+                    ? styles.continueButtonActive
+                    : styles.continueButtonDisabled,
+                ]}
+                onPress={handleContinue}
+                disabled={!canContinue}
+                accessibilityRole="button"
+                accessibilityLabel="Continuar con la compra"
+              >
+                <Text
+                  style={[
+                    styles.continueButtonText,
+                    canContinue
+                      ? styles.continueButtonTextActive
+                      : styles.continueButtonTextDisabled,
+                  ]}
+                >
+                  CONTINUAR
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -269,6 +322,9 @@ export default function EventDetailScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    flex: 1,
+  },
+  keyboardContainer: {
     flex: 1,
   },
   loadingContainer: {
