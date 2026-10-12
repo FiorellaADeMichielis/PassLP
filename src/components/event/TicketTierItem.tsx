@@ -83,6 +83,7 @@ export function TicketTierItem({
             style={[styles.stepperBtn, isMin && styles.stepperBtnDisabled]}
             onPress={handleDecrement}
             disabled={isMin}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Quitar una entrada de ${tier.name}`}
           >
@@ -97,6 +98,7 @@ export function TicketTierItem({
             style={[styles.stepperBtn, isMax && styles.stepperBtnDisabled]}
             onPress={handleIncrement}
             disabled={isMax}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Agregar una entrada de ${tier.name}`}
           >

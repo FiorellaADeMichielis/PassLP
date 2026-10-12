@@ -234,6 +234,8 @@ export function ParkingSection({
                     <TouchableOpacity
                       style={styles.removeBtn}
                       onPress={() => onRemoveVehicle(item.id)}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityRole="button"
                       accessibilityLabel="Eliminar vehículo"
                     >
                       <TrashIcon size={16} color="#E63946" />

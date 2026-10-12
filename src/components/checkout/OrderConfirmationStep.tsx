@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ShieldCheckIcon } from '../ui/Icons';
 import { checkoutService } from '@/services/checkoutService';
@@ -39,7 +39,14 @@ export function OrderConfirmationStep({
   onConfirm,
   onBack,
 }: OrderConfirmationStepProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const cartCost = pricing.ticketsSubtotal + pricing.parkingSubtotal;
+
+  function handleConfirmPress() {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    onConfirm();
+  }
 
   return (
     <View style={styles.container}>
@@ -187,13 +194,16 @@ export function OrderConfirmationStep({
       {/* Botones de acción */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={onConfirm}
+          style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
+          onPress={handleConfirmPress}
+          disabled={isSubmitting}
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Continuar al pago"
         >
-          <Text style={styles.confirmButtonText}>CONTINUAR AL PAGO</Text>
+          <Text style={styles.confirmButtonText}>
+            {isSubmitting ? 'PROCESANDO...' : 'CONTINUAR AL PAGO'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -411,6 +421,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
+  },
+  confirmButtonDisabled: {
+    opacity: 0.6,
   },
   confirmButtonText: {
     color: '#332F2B',
