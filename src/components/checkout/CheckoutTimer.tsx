@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus, StyleSheet, Text, View } from 'react-native';
 import { TimerIcon } from '../ui/Icons';
 
 interface CheckoutTimerProps {
@@ -10,35 +10,53 @@ interface CheckoutTimerProps {
 /**
  * Temporizador de cuenta regresiva en tiempo real para el proceso de compra (S3).
  *
- * Según PASSLP_REFERENCIA.md §5.1:
- * "TEMPORIZADOR: 09:54 MIN" con acento en teal #54C1C3.
+ * Utiliza una marca de tiempo absoluta (target timestamp) y sincronización
+ * con AppState para persistir y continuar descontando el tiempo real transcurrido
+ * incluso si el usuario suspende la aplicación o la envía a segundo plano.
  * Al agotarse, se dispara el callback `onExpire`.
  */
 export function CheckoutTimer({
   initialSeconds = 600,
   onExpire,
 }: CheckoutTimerProps) {
-  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
+  const targetTimeRef = useRef<number>(Date.now() + initialSeconds * 1000);
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
+
+  const [secondsLeft, setSecondsLeft] = useState<number>(initialSeconds);
 
   useEffect(() => {
-    if (secondsLeft <= 0) {
-      onExpire();
-      return;
+    function updateTime() {
+      const remaining = Math.max(
+        0,
+        Math.ceil((targetTimeRef.current - Date.now()) / 1000)
+      );
+      setSecondsLeft(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        onExpireRef.current();
+      }
     }
 
-    const timer = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onExpire();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // Intervalo regular cada segundo
+    const interval = setInterval(updateTime, 1000);
 
-    return () => clearInterval(timer);
-  }, [secondsLeft, onExpire]);
+    // Sincronización inmediata al volver desde segundo plano
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextAppState: AppStateStatus) => {
+        if (nextAppState === 'active') {
+          updateTime();
+        }
+      }
+    );
+
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
+  }, []);
 
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
