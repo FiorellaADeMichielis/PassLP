@@ -7,18 +7,8 @@
     "icon": "./assets/icon.png",
     "scheme": "passlp",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#332F2B"
-    },
     "ios": {
-      "icon": "./assets/icon.png",
-      "splash": {
-        "image": "./assets/splash-icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#332F2B"
-      }
+      "icon": "./assets/icon.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,11 +16,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/monochrome-icon.png"
-      },
-      "splash": {
-        "image": "./assets/splash-icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#332F2B"
       },
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize"
