@@ -25,8 +25,7 @@ import { PaymentSuccessModal } from '@/components/checkout/PaymentSuccessModal';
 import { EventHero } from '@/components/event/EventHero';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { checkoutService } from '@/services/checkoutService';
-import { eventsService } from '@/services/eventsService';
+import { checkoutService, eventsService } from '@/services';
 import {
   AttendeeData,
   BuyerData,

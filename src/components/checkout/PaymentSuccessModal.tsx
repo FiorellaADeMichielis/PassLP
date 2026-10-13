@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Palette } from '@/constants/theme';
 import { ShieldCheckIcon } from '../ui/Icons';
-import { checkoutService } from '@/services/checkoutService';
+import { checkoutService } from '@/services';
 import { Order } from '@/types';
 
 interface PaymentSuccessModalProps {

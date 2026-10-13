@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ShieldCheckIcon } from '../ui/Icons';
-import { checkoutService } from '@/services/checkoutService';
+import { checkoutService } from '@/services';
 import {
   AttendeeData,
   BuyerData,

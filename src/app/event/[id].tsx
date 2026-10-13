@@ -20,7 +20,7 @@ import { ParkingSection } from '@/components/event/ParkingSection';
 import { TicketTierItem } from '@/components/event/TicketTierItem';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { eventsService } from '@/services/eventsService';
+import { eventsService } from '@/services';
 import { EventItem, ParkingVehicle } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ParkingBadgeIcon } from '../ui/Icons';
-import { checkoutService } from '@/services/checkoutService';
+import { checkoutService } from '@/services';
 import { CartTicketItem, EventItem, OrderPricing, ParkingVehicle } from '@/types';
 
 interface OrderSummaryStepProps {

@@ -19,7 +19,7 @@ import { FeaturedCarousel } from '@/components/home/FeaturedCarousel';
 import { HomeFooter } from '@/components/home/HomeFooter';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { eventsService } from '@/services/eventsService';
+import { eventsService } from '@/services';
 import { EventCategory, EventItem } from '@/types';
 
 // ─── Pantalla principal ────────────────────────────────────────────────────────
