@@ -52,6 +52,7 @@ Aplicación móvil frontend para la cartelera, selección y compra de entradas a
 | `npm run android` | `expo start --android` | Inicia y abre directamente en el emulador Android |
 | `npm run ios` | `expo start --ios` | Inicia y abre directamente en el simulador iOS |
 | `npm run web` | `expo start --web` | Inicia la versión web para desarrollo rápido |
+| `npm test` | `jest` | Ejecuta la suite de pruebas unitarias automatizadas |
 | `npm run type-check`| `tsc --noEmit` | Verifica tipado estricto sin emitir archivos |
 | `npm run lint` | `expo lint` | Ejecuta linter ESLint con reglas de Expo |
 
@@ -63,9 +64,11 @@ El código fuente se encuentra en la carpeta `src/`, siguiendo una arquitectura 
 
 ```
 src/
+├── __tests__/            # Pruebas unitarias automatizadas con Jest
 ├── app/                  # Rutas declarativas basadas en archivos (Expo Router)
 │   ├── _layout.tsx       # Root Layout con Stack, temas y StatusBar nativa
 │   ├── index.tsx         # Pantalla principal (Cartelera de Eventos)
+│   ├── account.tsx       # Pantalla informativa de cuenta de usuario
 │   ├── event/[id].tsx    # Detalle del evento, entradas y estacionamiento
 │   └── checkout/[id].tsx # Flujo completo de compra con stepper de pasos
 ├── components/           # Componentes UI organizados por contexto
@@ -73,12 +76,14 @@ src/
 │   ├── event/            # Componentes de evento (Hero, Acerca de, Lotes de entradas, Estacionamiento)
 │   ├── home/             # Componentes de cartelera (Header, Carrusel, Filtros, Tarjetas, Footer)
 │   └── ui/               # Componentes transversales e Iconos vectoriales nativos SVG
-├── constants/            # Tokens de diseño y constantes de tema
+├── constants/            # Tokens de diseño y constantes de tema (Palette, Spacing, Fonts)
 ├── data/                 # Datos mock representativos de la cartelera real
+├── features/             # Módulos de dominio autocontenidos
+│   └── parking/          # Componentes y validadores de patentes de estacionamiento
 ├── hooks/                # Custom hooks (tema institucional useAppTheme)
-├── services/             # Servicios desacoplados de datos (eventsService, checkoutService)
+├── services/             # Fachada de servicios desacoplados (eventsService, checkoutService)
 ├── types/                # Contratos y tipos de dominio en TypeScript
-└── utils/                # Utilidades de imágenes y formateo
+└── utils/                # Utilidades de imágenes, carrusel, formateo y validación
 ```
 
 ---
