@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -38,6 +38,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
   const router = useRouter();
   const { colors } = useAppTheme();
   const isNavigatingRef = useRef(false);
+  const [hasError, setHasError] = useState(false);
 
   function handlePress() {
     if (isNavigatingRef.current) return;
@@ -72,9 +73,10 @@ export function EventCard({ event, onPress }: EventCardProps) {
         accessibilityElementsHidden={true}
       >
         <Image
-          source={resolveFlyerSource(event.flyerUrl)}
+          source={hasError ? require('@/assets/icon.png') : resolveFlyerSource(event.flyerUrl)}
           style={styles.flyer}
-          contentFit="cover"
+          contentFit={hasError ? 'contain' : 'cover'}
+          onError={() => setHasError(true)}
         />
       </TouchableOpacity>
 

@@ -171,6 +171,8 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
               >
                 <Image
                   source={resolveFlyerSource(item.flyerUrl)}
+                  placeholder={require('@/assets/icon.png')}
+                  placeholderContentFit="contain"
                   style={styles.poster}
                   contentFit="cover"
                   transition={0}
