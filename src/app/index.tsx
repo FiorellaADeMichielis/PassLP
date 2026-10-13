@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Image } from 'expo-image';
 import {
   ActivityIndicator,
   FlatList,
@@ -132,6 +133,40 @@ export default function HomeScreen() {
     );
   }
 
+  // ── Pantalla de carga inicial al abrir la app con splash-icon en alta definición ───
+  if (loading && events.length === 0) {
+    return (
+      <SafeAreaView
+        style={[styles.fullLoaderContainer, { backgroundColor: colors.screenBg }]}
+        edges={['top', 'bottom']}
+      >
+        <StatusBar style={colors.statusBarStyle} />
+        <View style={styles.fullLoaderContent}>
+          <Image
+            source={
+              colors.screenBg === '#12100E'
+                ? require('@/assets/splash-icon-dark.png')
+                : require('@/assets/splash-icon.png')
+            }
+            style={styles.splashIconImage}
+            contentFit="contain"
+            priority="high"
+            accessibilityLabel="PassLP"
+          />
+          <ActivityIndicator
+            size="large"
+            color="#F77F00"
+            style={styles.splashLoader}
+            accessibilityLabel="Cargando cartelera de eventos"
+          />
+          <Text style={[styles.splashLoadingText, { color: colors.textSecondary }]}>
+            Cargando cartelera de eventos...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   // ── Layout ─────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView
@@ -235,6 +270,7 @@ const styles = StyleSheet.create({
   row: {
     gap: 12,
     marginBottom: 12,
+    alignItems: 'stretch',
   },
   cardWrapper: {
     flex: 1,
@@ -260,5 +296,27 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     textAlign: 'center',
+  },
+  fullLoaderContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fullLoaderContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+    paddingHorizontal: 24,
+  },
+  splashIconImage: {
+    width: 220,
+    height: 70,
+  },
+  splashLoader: {
+    marginTop: 8,
+  },
+  splashLoadingText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

@@ -20,7 +20,9 @@ export function EventAbout({ about }: EventAboutProps) {
     <View style={styles.container}>
       <Text style={styles.title}>SOBRE EL EVENTO</Text>
       <View style={styles.divider} />
-      <Text style={styles.content}>{about}</Text>
+      <Text style={styles.content} selectable={true}>
+        {about}
+      </Text>
     </View>
   );
 }

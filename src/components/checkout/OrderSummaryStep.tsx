@@ -43,7 +43,7 @@ export function OrderSummaryStep({
       <View style={styles.ticketCard}>
         <View style={styles.ticketHeader}>
           <Text style={styles.ticketTitle}>TUS ENTRADAS</Text>
-          <Text style={styles.eventSubtitle} numberOfLines={1}>
+          <Text style={styles.eventSubtitle} numberOfLines={1} selectable={true}>
             {event.title}
           </Text>
         </View>

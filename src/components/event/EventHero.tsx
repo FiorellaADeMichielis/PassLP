@@ -74,23 +74,29 @@ export function EventHero({ event }: EventHeroProps) {
         <View style={styles.metaContainer}>
           <Text style={styles.category}>{event.category.toUpperCase()}</Text>
 
-          <Text style={styles.title}>{event.title}</Text>
+          <Text style={styles.title} selectable={true}>
+            {event.title}
+          </Text>
 
           {/* Fecha y hora con iconos SVG */}
           <View style={styles.infoRow}>
             <CalendarIcon size={14} color="#F77F00" />
-            <Text style={styles.infoText}>{event.date}</Text>
+            <Text style={styles.infoText} selectable={true}>
+              {event.date}
+            </Text>
           </View>
 
           <View style={styles.infoRow}>
             <ClockIcon size={14} color="#F77F00" />
-            <Text style={styles.infoText}>{event.time}</Text>
+            <Text style={styles.infoText} selectable={true}>
+              {event.time}
+            </Text>
           </View>
 
           {/* Lugar y dirección */}
           <View style={styles.infoRow}>
             <PinIcon size={14} color="#F77F00" />
-            <Text style={styles.infoText}>
+            <Text style={styles.infoText} selectable={true}>
               {event.venue.name} · {event.venue.address}, {event.venue.city}
             </Text>
           </View>

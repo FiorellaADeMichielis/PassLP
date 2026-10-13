@@ -52,9 +52,10 @@ export function OrderConfirmationStep({
     <View style={styles.container}>
       {/* Título Principal */}
       <View style={styles.card}>
-        <Text style={styles.mainTitle}>Confirmá tu compra</Text>
-        <Text style={styles.eventTitle}>{event.title}</Text>
-        <Text style={styles.eventDate}>
+        <Text style={styles.eventTitle} selectable={true}>
+          {event.title}
+        </Text>
+        <Text style={styles.eventDate} selectable={true}>
           {event.date} • {event.time}
         </Text>
       </View>
@@ -66,34 +67,42 @@ export function OrderConfirmationStep({
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Nombre y Apellido</Text>
-          <Text style={styles.infoValue}>
+          <Text style={styles.infoValue} selectable={true}>
             {buyer.firstName} {buyer.lastName}
           </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>DNI</Text>
-          <Text style={styles.infoValue}>{buyer.dni}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.dni}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Teléfono</Text>
-          <Text style={styles.infoValue}>{buyer.phone}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.phone}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Email</Text>
-          <Text style={styles.infoValue}>{buyer.email}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.email}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Provincia</Text>
-          <Text style={styles.infoValue}>{buyer.province}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.province}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Mismo titular en todas las entradas</Text>
-          <Text style={styles.infoValue}>
+          <Text style={styles.infoValue} selectable={true}>
             {buyer.allTicketsSameName ? 'Sí' : 'No'}
           </Text>
         </View>
@@ -106,10 +115,12 @@ export function OrderConfirmationStep({
             {attendees.map((att) => (
               <View key={att.id} style={styles.attendeeRow}>
                 <Text style={styles.attendeeBadge}>#{att.attendeeNumber}</Text>
-                <Text style={styles.attendeeName}>
+                <Text style={styles.attendeeName} selectable={true}>
                   {att.firstName} {att.lastName}
                 </Text>
-                <Text style={styles.attendeeDni}>DNI {att.dni}</Text>
+                <Text style={styles.attendeeDni} selectable={true}>
+                  DNI {att.dni}
+                </Text>
               </View>
             ))}
           </View>

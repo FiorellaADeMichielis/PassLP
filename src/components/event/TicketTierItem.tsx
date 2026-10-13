@@ -60,7 +60,11 @@ export function TicketTierItem({
         </Text>
 
         {tier.description ? (
-          <Text style={styles.description} maxFontSizeMultiplier={1.3}>
+          <Text
+            style={styles.description}
+            selectable={true}
+            maxFontSizeMultiplier={1.3}
+          >
             {tier.description}
           </Text>
         ) : null}
