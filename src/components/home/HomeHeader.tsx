@@ -91,6 +91,7 @@ export function HomeHeader({
         onPress={handleIngresarPress}
         accessibilityRole="button"
         accessibilityLabel="Ingresar a tu cuenta"
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Text style={[styles.btnIngresarText, { color: colors.btnIngresarText }]}>
           Ingresar

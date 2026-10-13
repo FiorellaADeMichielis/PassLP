@@ -56,6 +56,7 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`Categoría ${category}`}
+              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
             >
               <Text
                 style={[
