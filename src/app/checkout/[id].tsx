@@ -53,6 +53,13 @@ const INITIAL_BUYER_DATA: BuyerData = {
  * la persistencia de datos del comprador y asistentes, y la apertura
  * del modal de simulación de pago.
  */
+/** Desplazamiento Y de respaldo para el contenido de los pasos previo a la medición nativa onLayout. */
+const DEFAULT_STEP_CONTENT_FALLBACK_Y = 540;
+/** Margen de holgura vertical sobre el teclado para mantener visible el campo activo con su etiqueta. */
+const KEYBOARD_FIELD_CLEARANCE_OFFSET = 120;
+/** Margen superior de seguridad al scrollear al inicio de un nuevo paso. */
+const STEP_TOP_SCROLL_OFFSET = 20;
+
 export default function CheckoutScreen() {
   const router = useRouter();
   const { colors } = useAppTheme();
@@ -71,8 +78,8 @@ export default function CheckoutScreen() {
 
   function handleScrollToInput(fieldOffset: number) {
     activeFieldOffsetRef.current = fieldOffset;
-    const baseStepY = stepContentY > 0 ? stepContentY : 540;
-    const targetY = Math.max(0, baseStepY + fieldOffset - 120);
+    const baseStepY = stepContentY > 0 ? stepContentY : DEFAULT_STEP_CONTENT_FALLBACK_Y;
+    const targetY = Math.max(0, baseStepY + fieldOffset - KEYBOARD_FIELD_CLEARANCE_OFFSET);
     setTimeout(() => {
       scrollRef.current?.scrollTo({ y: targetY, animated: true });
     }, 100);
@@ -85,8 +92,8 @@ export default function CheckoutScreen() {
     const showSub = Keyboard.addListener(showEvent, () => {
       setIsKeyboardVisible(true);
       if (activeFieldOffsetRef.current !== null) {
-        const baseStepY = stepContentY > 0 ? stepContentY : 540;
-        const targetY = Math.max(0, baseStepY + activeFieldOffsetRef.current - 120);
+        const baseStepY = stepContentY > 0 ? stepContentY : DEFAULT_STEP_CONTENT_FALLBACK_Y;
+        const targetY = Math.max(0, baseStepY + activeFieldOffsetRef.current - KEYBOARD_FIELD_CLEARANCE_OFFSET);
         scrollRef.current?.scrollTo({ y: targetY, animated: true });
       }
     });
@@ -212,8 +219,8 @@ export default function CheckoutScreen() {
     setBuyerData(data);
     setCurrentStep(3);
     setTimeout(() => {
-      const baseStepY = stepContentY > 0 ? stepContentY : 540;
-      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+      const baseStepY = stepContentY > 0 ? stepContentY : DEFAULT_STEP_CONTENT_FALLBACK_Y;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - STEP_TOP_SCROLL_OFFSET), animated: true });
     }, 60);
   }
 
@@ -229,16 +236,16 @@ export default function CheckoutScreen() {
     // Avanza al paso 4 (Confirmación con asistentes)
     setCurrentStep(4);
     setTimeout(() => {
-      const baseStepY = stepContentY > 0 ? stepContentY : 540;
-      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+      const baseStepY = stepContentY > 0 ? stepContentY : DEFAULT_STEP_CONTENT_FALLBACK_Y;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - STEP_TOP_SCROLL_OFFSET), animated: true });
     }, 60);
   }
 
   function handleBackFromAttendees() {
     setCurrentStep(2);
     setTimeout(() => {
-      const baseStepY = stepContentY > 0 ? stepContentY : 540;
-      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+      const baseStepY = stepContentY > 0 ? stepContentY : DEFAULT_STEP_CONTENT_FALLBACK_Y;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - STEP_TOP_SCROLL_OFFSET), animated: true });
     }, 60);
   }
 
