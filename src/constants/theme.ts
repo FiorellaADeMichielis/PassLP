@@ -24,6 +24,37 @@ export const Colors = {
   },
 } as const;
 
+export const Palette = {
+  primary: '#F77F00',
+  primaryDark: '#C84200',
+  primaryHover: '#E85D04',
+  secondary: '#54C1C3',
+  charcoal: '#332F2B',
+  charcoalBorder: '#47423D',
+  charcoalDark: '#1E1A17',
+  danger: '#E63946',
+  success: '#2A9D8F',
+  stepCurrent: '#1B9F00',
+  stepCompleted: '#41AA2B',
+  stepPending: '#BCBCBC',
+  background: '#F5F5F5',
+  cardBg: '#FFFFFF',
+  cardBorder: '#EAEAEA',
+  textPrimary: '#1A1A1A',
+  textSecondary: '#666666',
+  textMuted: '#595959',
+  tealDark: '#148083',
+  tealLight: '#EAF7F8',
+  tealBorder: '#C2E7E8',
+  dangerDark: '#D00000',
+  dangerLight: '#FFEBEB',
+  dangerBorder: '#FFC7C7',
+  border: '#CCCCCC',
+  borderInput: '#D8D3CD',
+  white: '#FFFFFF',
+  black: '#000000',
+} as const;
+
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({

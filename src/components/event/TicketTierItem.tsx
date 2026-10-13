@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { MinusIcon, PlusIcon } from '@/components/ui/Icons';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { TicketTier } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -118,14 +118,14 @@ export function TicketTierItem({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     borderRadius: 12,
     padding: Spacing.three,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: Spacing.two,
-    shadowColor: '#000000',
+    shadowColor: Palette.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   tierLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#E85D04',
+    color: Palette.primaryHover,
     letterSpacing: 0.5,
   },
   tierType: {
@@ -158,17 +158,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     lineHeight: 18,
   },
   description: {
     fontSize: 11,
-    color: '#666666',
+    color: Palette.textSecondary,
   },
   price: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     marginTop: 2,
   },
   stepperWrapper: {
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   quantityText: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontSize: 14,
     fontWeight: '700',
     minWidth: 18,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
   lastUnitsText: {
     fontSize: 9,
-    color: '#E63946',
+    color: Palette.danger,
     fontWeight: '600',
   },
 });

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, StyleSheet, Text, View } from 'react-native';
+import { Palette } from '@/constants/theme';
 import { TimerIcon } from '../ui/Icons';
 
 interface CheckoutTimerProps {
@@ -71,7 +72,7 @@ export function CheckoutTimer({
     <View style={[styles.container, isLowTime && styles.containerUrgent]}>
       <TimerIcon
         size={15}
-        color={isLowTime ? '#D00000' : '#148083'}
+        color={isLowTime ? Palette.dangerDark : Palette.tealDark}
         strokeWidth={2.4}
       />
       <Text style={styles.label}>TEMPORIZADOR:</Text>
@@ -87,34 +88,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#EAF7F8',
+    backgroundColor: Palette.tealLight,
     paddingVertical: 7,
     paddingHorizontal: 14,
     borderRadius: 20,
     alignSelf: 'center',
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: '#C2E7E8',
+    borderColor: Palette.tealBorder,
     gap: 6,
   },
   containerUrgent: {
-    backgroundColor: '#FFEBEB',
-    borderColor: '#FFC7C7',
+    backgroundColor: Palette.dangerLight,
+    borderColor: Palette.dangerBorder,
   },
   label: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#332F2B',
+    color: Palette.charcoal,
     letterSpacing: 0.5,
   },
   timeText: {
     fontSize: 12,
     fontWeight: '900',
-    color: '#148083',
+    color: Palette.tealDark,
     letterSpacing: 0.8,
   },
   timeTextUrgent: {
-    color: '#D00000',
+    color: Palette.dangerDark,
   },
 });
 

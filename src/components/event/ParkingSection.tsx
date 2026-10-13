@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { ParkingBadgeIcon, TrashIcon } from '@/components/ui/Icons';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { PatenteInput, normalizarPatente, validarPatente } from '@/features/parking';
 import { ParkingOption, ParkingVehicle, VehicleType } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   formBox: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     padding: Spacing.three,
     borderRadius: 10,
     gap: Spacing.two,
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   formSectionTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     letterSpacing: 0.5,
   },
   inputLabel: {
@@ -355,8 +355,8 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
-    backgroundColor: '#FFFFFF',
+    borderColor: Palette.border,
+    backgroundColor: Palette.white,
   },
   typeChipSelected: {
     borderColor: '#0D4F9C',
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     color: '#444444',
   },
   typeChipTextSelected: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontWeight: '700',
   },
   input: {
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 13,
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
   },
   actionRow: {
     flexDirection: 'row',
@@ -394,10 +394,10 @@ const styles = StyleSheet.create({
   priceValue: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
   },
   addBtn: {
-    backgroundColor: '#000000',
+    backgroundColor: Palette.black,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 9,
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   addBtnText: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
@@ -435,11 +435,11 @@ const styles = StyleSheet.create({
   vehiclePlate: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
   },
   vehicleModel: {
     fontSize: 11,
-    color: '#666666',
+    color: Palette.textSecondary,
   },
   vehicleRight: {
     flexDirection: 'row',
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   vehiclePrice: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#000000',
+    color: Palette.black,
   },
   removeBtn: {
     padding: 4,

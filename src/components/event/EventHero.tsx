@@ -8,7 +8,7 @@ import {
   ClockIcon,
   PinIcon,
 } from '@/components/ui/Icons';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { EventItem } from '@/types';
 import { resolveFlyerSource } from '@/utils/imageUtils';
 
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.12)',
   },
   backText: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
     aspectRatio: 3 / 4,
     borderRadius: 14,
     overflow: 'hidden',
-    shadowColor: '#000000',
+    shadowColor: Palette.black,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 8,
-    backgroundColor: '#000000',
+    backgroundColor: Palette.black,
   },
   flyer: {
     width: '100%',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: Palette.white,
     textTransform: 'uppercase',
     lineHeight: 26,
     marginBottom: 4,

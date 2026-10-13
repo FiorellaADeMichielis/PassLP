@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Palette } from '@/constants/theme';
 import { ShieldCheckIcon } from '../ui/Icons';
 import { checkoutService } from '@/services/checkoutService';
 import { Order } from '@/types';
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
-    shadowColor: '#1B9F00',
+    shadowColor: Palette.stepCurrent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
@@ -177,13 +178,13 @@ const styles = StyleSheet.create({
     maxWidth: '65%',
   },
   closeButton: {
-    backgroundColor: '#F77F00',
+    backgroundColor: Palette.primary,
     width: '100%',
     paddingVertical: 14,
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#F77F00',
+    shadowColor: Palette.primary,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
