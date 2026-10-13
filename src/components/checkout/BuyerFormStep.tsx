@@ -20,16 +20,6 @@ import {
   normalizeDNI,
 } from '@/utils/validation';
 
-export {
-  ARGENTINE_PROVINCES,
-  cleanName,
-  formatDNI,
-  formatPhone,
-  isValidDNI,
-  isValidEmail,
-  normalizeDNI,
-};
-
 interface BuyerFormStepProps {
   initialData: BuyerData;
   onSubmit: (data: BuyerData) => void;
