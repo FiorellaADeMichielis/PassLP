@@ -15,7 +15,9 @@ import {
   cleanName,
   formatDNI,
   formatPhone,
+  isValidDNI,
   isValidEmail,
+  normalizeDNI,
 } from '@/utils/validation';
 
 export {
@@ -23,7 +25,9 @@ export {
   cleanName,
   formatDNI,
   formatPhone,
+  isValidDNI,
   isValidEmail,
+  normalizeDNI,
 };
 
 interface BuyerFormStepProps {
@@ -102,8 +106,8 @@ export function BuyerFormStep({
     const dniDigits = formData.dni.replace(/\D/g, '');
     if (!dniDigits) {
       newErrors.dni = 'Ingresá tu DNI';
-    } else if (dniDigits.length !== 8) {
-      newErrors.dni = 'El DNI debe tener exactamente 8 dígitos';
+    } else if (!isValidDNI(dniDigits)) {
+      newErrors.dni = 'El DNI debe tener entre 7 y 8 dígitos';
     }
 
     const phoneDigits = formData.phone.replace(/\D/g, '');
@@ -137,7 +141,11 @@ export function BuyerFormStep({
 
   function handleNext() {
     if (validate()) {
-      onSubmit(formData);
+      const normalizedData: BuyerData = {
+        ...formData,
+        dni: normalizeDNI(formData.dni),
+      };
+      onSubmit(normalizedData);
     }
   }
 
@@ -220,6 +228,14 @@ export function BuyerFormStep({
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(110)}
+              onBlur={() => {
+                if (formData.dni) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    dni: normalizeDNI(prev.dni),
+                  }));
+                }
+              }}
               onSubmitEditing={() => phoneRef.current?.focus()}
             />
             {errors.dni && <Text style={styles.errorText}>{errors.dni}</Text>}

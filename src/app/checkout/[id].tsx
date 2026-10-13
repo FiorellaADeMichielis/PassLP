@@ -68,26 +68,39 @@ export default function CheckoutScreen() {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const [stepContentY, setStepContentY] = useState(0);
+  const activeFieldOffsetRef = useRef<number | null>(null);
 
   function handleScrollToInput(fieldOffset: number) {
-    const targetY = Math.max(0, stepContentY + fieldOffset - 80);
+    activeFieldOffsetRef.current = fieldOffset;
+    const baseStepY = stepContentY > 0 ? stepContentY : 540;
+    const targetY = Math.max(0, baseStepY + fieldOffset - 120);
     setTimeout(() => {
       scrollRef.current?.scrollTo({ y: targetY, animated: true });
-    }, 120);
+    }, 100);
   }
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-    const showSub = Keyboard.addListener(showEvent, () => setIsKeyboardVisible(true));
-    const hideSub = Keyboard.addListener(hideEvent, () => setIsKeyboardVisible(false));
+    const showSub = Keyboard.addListener(showEvent, () => {
+      setIsKeyboardVisible(true);
+      if (activeFieldOffsetRef.current !== null) {
+        const baseStepY = stepContentY > 0 ? stepContentY : 540;
+        const targetY = Math.max(0, baseStepY + activeFieldOffsetRef.current - 120);
+        scrollRef.current?.scrollTo({ y: targetY, animated: true });
+      }
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setIsKeyboardVisible(false);
+      activeFieldOffsetRef.current = null;
+    });
 
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, []);
+  }, [stepContentY]);
 
   // Parseo de parámetros
   const ticketQuantities: Record<string, number> = useMemo(() => {
@@ -198,27 +211,36 @@ export default function CheckoutScreen() {
 
   function handleBuyerSubmit(data: BuyerData) {
     setBuyerData(data);
-    if (data.allTicketsSameName) {
-      // Salta directo al paso de confirmación
-      setCurrentStep(3);
-    } else {
-      // Va al paso de asistentes
-      setCurrentStep(3);
-    }
+    setCurrentStep(3);
+    setTimeout(() => {
+      const baseStepY = stepContentY > 0 ? stepContentY : 540;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+    }, 60);
   }
 
   function handleBackFromBuyer() {
     setCurrentStep(1);
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }, 60);
   }
 
   function handleAttendeesSubmit(attendees: AttendeeData[]) {
     setAttendeesData(attendees);
     // Avanza al paso 4 (Confirmación con asistentes)
     setCurrentStep(4);
+    setTimeout(() => {
+      const baseStepY = stepContentY > 0 ? stepContentY : 540;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+    }, 60);
   }
 
   function handleBackFromAttendees() {
     setCurrentStep(2);
+    setTimeout(() => {
+      const baseStepY = stepContentY > 0 ? stepContentY : 540;
+      scrollRef.current?.scrollTo({ y: Math.max(0, baseStepY - 20), animated: true });
+    }, 60);
   }
 
   function handleBackFromConfirmation() {
@@ -349,6 +371,7 @@ export default function CheckoutScreen() {
                 initialAttendees={attendeesData}
                 onSubmit={handleAttendeesSubmit}
                 onBack={handleBackFromAttendees}
+                onFocusField={handleScrollToInput}
               />
             )}
           </View>
