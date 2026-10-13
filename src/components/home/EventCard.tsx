@@ -10,7 +10,7 @@ import { EventItem } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 import { resolveFlyerSource } from '@/utils/imageUtils';
 
-const BUY_BTN_BG = '#E85D04';
+const BUY_BTN_BG = '#C84200';
 const BUY_BTN_TEXT = '#FFFFFF';
 const SHADOW_COLOR = '#000000';
 
