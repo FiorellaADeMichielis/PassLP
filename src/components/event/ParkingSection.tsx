@@ -10,6 +10,7 @@ import {
 
 import { ParkingBadgeIcon, TrashIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
+import { PatenteInput, normalizarPatente, validarPatente } from '@/features/parking';
 import { ParkingOption, ParkingVehicle, VehicleType } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -54,27 +55,19 @@ export function ParkingSection({
   const currentOption = options.find((opt) => opt.vehicleType === selectedType);
   const currentPrice = currentOption ? currentOption.price : 10000;
 
+  const isPlateValid = validarPatente(plate);
+  const isModelValid = model.trim().length >= 2;
+  const isAddEnabled = isPlateValid && isModelValid;
+
   function handleAdd() {
-    const cleanPlate = plate.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    if (!isPlateValid) return;
     const cleanModel = model.trim();
-
-    if (!cleanPlate) {
-      Alert.alert('Datos requeridos', 'Por favor ingresá la patente del vehículo.');
-      return;
-    }
-
-    if (cleanPlate.length < 6 || cleanPlate.length > 7) {
-      Alert.alert(
-        'Patente no válida',
-        'La patente debe tener 6 o 7 caracteres alfanuméricos (ej. AB123CD o ABC123).'
-      );
-      return;
-    }
-
     if (!cleanModel || cleanModel.length < 2) {
       Alert.alert('Datos requeridos', 'Por favor ingresá el modelo del vehículo (mín. 2 caracteres).');
       return;
     }
+
+    const cleanPlate = normalizarPatente(plate);
 
     const newVehicle: ParkingVehicle = {
       id: `pkg-${cleanPlate}-${addedVehicles.length + 1}`,
@@ -164,16 +157,11 @@ export function ParkingSection({
 
             {/* Input Patente */}
             <Text style={styles.inputLabel}>PATENTE</Text>
-            <TextInput
+            <PatenteInput
               style={styles.input}
-              placeholder="Ej. AB123CD o ABC123"
-              placeholderTextColor="#999999"
               value={plate}
-              onChangeText={setPlate}
-              autoCapitalize="characters"
-              autoCorrect={false}
-              returnKeyType="next"
-              blurOnSubmit={false}
+              onChange={setPlate}
+              placeholder="Ej. AB123CD o ABC123"
               onFocus={onFocusPlate}
               onSubmitEditing={() => modelInputRef.current?.focus()}
             />
@@ -200,7 +188,13 @@ export function ParkingSection({
                 <Text style={styles.priceValue}>{formatPrice(currentPrice)}</Text>
               </View>
 
-              <TouchableOpacity style={styles.addBtn} onPress={handleAdd}>
+              <TouchableOpacity
+                style={[styles.addBtn, !isAddEnabled && styles.addBtnDisabled]}
+                onPress={handleAdd}
+                disabled={!isAddEnabled}
+                accessibilityRole="button"
+                accessibilityLabel="Agregar vehículo de estacionamiento"
+              >
                 <Text style={styles.addBtnText}>AGREGAR</Text>
               </TouchableOpacity>
             </View>
@@ -217,7 +211,7 @@ export function ParkingSection({
                 <View key={item.id} style={styles.vehicleItem}>
                   <View style={styles.vehicleInfo}>
                     <Text style={styles.vehiclePlate}>
-                      🚗 {item.plate} · {item.vehicleType}
+                      {item.plate} · {item.vehicleType}
                     </Text>
                     <Text style={styles.vehicleModel}>{item.model}</Text>
                   </View>
@@ -231,7 +225,7 @@ export function ParkingSection({
                       accessibilityRole="button"
                       accessibilityLabel="Eliminar vehículo"
                     >
-                      <TrashIcon size={16} color="#E63946" />
+                      <TrashIcon size={16} color="#000000" />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -408,6 +402,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 9,
   },
+  addBtnDisabled: {
+    opacity: 0.4,
+  },
   addBtnText: {
     color: '#FFFFFF',
     fontSize: 12,
@@ -452,7 +449,7 @@ const styles = StyleSheet.create({
   vehiclePrice: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#0D4F9C',
+    color: '#000000',
   },
   removeBtn: {
     padding: 4,
