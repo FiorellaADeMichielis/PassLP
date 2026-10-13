@@ -53,32 +53,47 @@ describe('carouselUtils', () => {
   describe('calcularAjusteCircular', () => {
     const snap = 200;
     const total = 5;
-    const repeticiones = 7;
+    const repeticiones = 51; // Bloque medio = 25 (índices 125..129)
 
     it('no requiere ajuste si el índice se encuentra dentro del bloque medio', () => {
-      // Bloque medio: 15..19
-      for (let i = 15; i <= 19; i++) {
+      // Bloque medio: 125..129
+      for (let i = 125; i <= 129; i++) {
         const res = calcularAjusteCircular(i * snap, snap, total, repeticiones);
         expect(res.necesitaAjuste).toBe(false);
         expect(res.targetOffset).toBe(i * snap);
-        expect(res.indiceReal).toBe(i - 15);
+        expect(res.indiceReal).toBe(i - 125);
       }
     });
 
-    it('calcula ajuste silencioso al bloque medio si se supera el último elemento del bloque', () => {
-      // Índice 20 (primer elemento del siguiente bloque) debe mapear a índice 15
-      const res = calcularAjusteCircular(20 * snap, snap, total, repeticiones);
-      expect(res.necesitaAjuste).toBe(true);
-      expect(res.targetOffset).toBe(15 * snap);
+    it('permite pasar del último al primer evento sin salto ni destello (bloque adyacente)', () => {
+      // Índice 130 es el primer elemento del siguiente bloque (vuelta completada)
+      // Debe mantener necesitaAjuste en false para que el scroll nativo fluya sin parpadeo
+      const res = calcularAjusteCircular(130 * snap, snap, total, repeticiones);
+      expect(res.necesitaAjuste).toBe(false);
+      expect(res.targetOffset).toBe(130 * snap);
       expect(res.indiceReal).toBe(0);
     });
 
-    it('calcula ajuste silencioso al bloque medio si se retrocede antes del primer elemento del bloque', () => {
-      // Índice 14 (último elemento del bloque anterior) debe mapear a índice 19
-      const res = calcularAjusteCircular(14 * snap, snap, total, repeticiones);
-      expect(res.necesitaAjuste).toBe(true);
-      expect(res.targetOffset).toBe(19 * snap);
+    it('permite retroceder antes del primer elemento sin salto ni destello (bloque anterior)', () => {
+      // Índice 124 es el último elemento del bloque anterior
+      const res = calcularAjusteCircular(124 * snap, snap, total, repeticiones);
+      expect(res.necesitaAjuste).toBe(false);
+      expect(res.targetOffset).toBe(124 * snap);
       expect(res.indiceReal).toBe(4);
+    });
+
+    it('reajusta suavemente al bloque medio solo si se alcanzan los extremos del buffer', () => {
+      // Extremo inicio (bloque 0, índice 2)
+      const resInicio = calcularAjusteCircular(2 * snap, snap, total, repeticiones);
+      expect(resInicio.necesitaAjuste).toBe(true);
+      expect(resInicio.targetOffset).toBe((25 * total + 2) * snap);
+      expect(resInicio.indiceReal).toBe(2);
+
+      // Extremo final (último bloque)
+      const resFinal = calcularAjusteCircular((50 * total + 1) * snap, snap, total, repeticiones);
+      expect(resFinal.necesitaAjuste).toBe(true);
+      expect(resFinal.targetOffset).toBe((25 * total + 1) * snap);
+      expect(resFinal.indiceReal).toBe(1);
     });
 
     it('maneja listas de 0 o 1 elemento sin ajustar', () => {

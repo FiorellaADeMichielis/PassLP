@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePathname, useRouter } from 'expo-router';
@@ -31,6 +32,7 @@ export function HomeFooter({ onPressHome, currentTab }: HomeFooterProps) {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
+  const isNavigatingRef = useRef(false);
 
   // Se deriva la pestaña activa dinámicamente de la ruta para que al volver
   // atrás con gestos o botón nativo de Android, se resincronice inmediatamente.
@@ -42,7 +44,17 @@ export function HomeFooter({ onPressHome, currentTab }: HomeFooterProps) {
       if (activeTab === 'inicio') {
         if (onPressHome) onPressHome();
       } else {
-        router.replace('/');
+        if (isNavigatingRef.current) return;
+        isNavigatingRef.current = true;
+        setTimeout(() => {
+          isNavigatingRef.current = false;
+        }, 500);
+
+        if (router.canGoBack()) {
+          router.back();
+        } else {
+          router.replace('/');
+        }
       }
     } else if (tab === 'explorar') {
       Alert.alert('Explorar', 'La sección de exploración estará disponible próximamente.');
@@ -50,6 +62,12 @@ export function HomeFooter({ onPressHome, currentTab }: HomeFooterProps) {
       Alert.alert('Mis Tickets', 'La visualización de tickets estará disponible próximamente.');
     } else if (tab === 'cuenta') {
       if (activeTab !== 'cuenta') {
+        if (isNavigatingRef.current) return;
+        isNavigatingRef.current = true;
+        setTimeout(() => {
+          isNavigatingRef.current = false;
+        }, 500);
+
         router.push('/account');
       }
     }

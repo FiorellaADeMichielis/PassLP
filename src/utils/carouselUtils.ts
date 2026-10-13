@@ -2,7 +2,7 @@
  * Utilidades puras para el cálculo de navegación e índices del carrusel circular infinito.
  */
 
-export const REPETICIONES_CARRUSEL_DEFAULT = 7;
+export const REPETICIONES_CARRUSEL_DEFAULT = 51;
 
 /**
  * Genera una lista virtual circular multiplicando los elementos originales
@@ -47,6 +47,12 @@ export function calcularIndiceMedio(
 /**
  * Calcula si la posición de scroll actual requiere un recentrado silencioso
  * hacia el bloque medio equivalente, garantizando loop infinito bidireccional.
+ *
+ * Durante la navegación habitual (decenas de vueltas continuas entre el último y
+ * el primer evento), no se realiza ningún salto de offset (necesitaAjuste: false),
+ * eliminando por completo cualquier destello, rebobinado o parpadeo de pantalla.
+ * Solo se reajusta suavemente si el usuario se aproxima a los extremos absolutos
+ * del buffer (primeros o últimos bloques).
  */
 export function calcularAjusteCircular(
   posicionX: number,
@@ -64,14 +70,27 @@ export function calcularAjusteCircular(
 
   const indiceActual = Math.round(posicionX / snapInterval);
   const indiceReal = ((indiceActual % totalElementos) + totalElementos) % totalElementos;
-  const indiceMedioBase = Math.floor(repeticiones / 2) * totalElementos;
-  const targetIndice = indiceMedioBase + indiceReal;
-  const targetOffset = targetIndice * snapInterval;
-  const necesitaAjuste = indiceActual !== targetIndice;
+  const bloqueActual = Math.floor(indiceActual / totalElementos);
+  const bloqueMedio = Math.floor(repeticiones / 2);
+
+  // Solo reajustar si el usuario se aproxima a los extremos del buffer virtual
+  const umbralExtremo = Math.max(1, Math.min(5, Math.floor(repeticiones * 0.15)));
+  const cercaDelInicio = bloqueActual < umbralExtremo;
+  const cercaDelFinal = bloqueActual >= repeticiones - umbralExtremo;
+
+  if (cercaDelInicio || cercaDelFinal) {
+    const targetIndice = bloqueMedio * totalElementos + indiceReal;
+    const targetOffset = targetIndice * snapInterval;
+    return {
+      necesitaAjuste: true,
+      targetOffset,
+      indiceReal,
+    };
+  }
 
   return {
-    necesitaAjuste,
-    targetOffset,
+    necesitaAjuste: false,
+    targetOffset: indiceActual * snapInterval,
     indiceReal,
   };
 }

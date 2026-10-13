@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -24,8 +25,15 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 export default function AccountScreen() {
   const router = useRouter();
   const { colors } = useAppTheme();
+  const isNavigatingRef = useRef(false);
 
   function handleBack() {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 500);
+
     if (router.canGoBack()) {
       router.back();
     } else {
@@ -70,12 +78,19 @@ export default function AccountScreen() {
           </Text>
         </TouchableOpacity>
 
-        <Image
-          source={require('@/assets/logo-on-dark.png')}
-          style={styles.logoImage}
-          contentFit="contain"
-          accessibilityLabel="Logotipo PassLP"
-        />
+        <TouchableOpacity
+          onPress={handleBack}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Ir al inicio de PassLP"
+        >
+          <Image
+            source={require('@/assets/logo-on-dark.png')}
+            style={styles.logoImage}
+            contentFit="contain"
+            accessibilityLabel="Logotipo PassLP"
+          />
+        </TouchableOpacity>
 
         {/* Espaciador para equilibrar el botón volver y centrar el logo */}
         <View style={styles.headerSpacer} />
@@ -146,7 +161,7 @@ export default function AccountScreen() {
           {/* Enlace secundario: Volver a la cartelera */}
           <TouchableOpacity
             style={styles.secondaryButton}
-            onPress={() => router.replace('/')}
+            onPress={handleBack}
             activeOpacity={0.7}
             accessibilityRole="button"
             accessibilityLabel="Volver a la cartelera de eventos"

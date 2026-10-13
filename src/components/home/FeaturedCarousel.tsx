@@ -11,7 +11,6 @@ import {
   View,
 } from 'react-native';
 
-import { useAppTheme } from '@/hooks/useAppTheme';
 import { EventItem } from '@/types';
 import {
   calcularAjusteCircular,
@@ -56,7 +55,6 @@ type CarouselItem = EventItem & { virtualId: string; realIndex: number };
  */
 export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const router = useRouter();
-  const { colors } = useAppTheme();
   const listRef = useRef<FlatList<CarouselItem>>(null);
 
   const initialIndex = useMemo(
@@ -94,6 +92,10 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
         snapToInterval={SNAP_INTERVAL}
         decelerationRate="fast"
         bounces={false}
+        removeClippedSubviews={false}
+        windowSize={7}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
         initialScrollIndex={events.length > 1 ? initialIndex : undefined}
         onScrollToIndexFailed={(info) => {
           listRef.current?.scrollToOffset({
@@ -161,7 +163,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 style={[
                   styles.posterWrapper,
                   {
-                    backgroundColor: colors.cardBorder,
+                    backgroundColor: '#1E1B18',
                     transform: [{ scale }],
                     opacity,
                   },
@@ -171,6 +173,9 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   source={resolveFlyerSource(item.flyerUrl)}
                   style={styles.poster}
                   contentFit="cover"
+                  transition={0}
+                  cachePolicy="memory-disk"
+                  priority="high"
                   accessibilityLabel={`Flyer de ${item.title}`}
                 />
               </Animated.View>
