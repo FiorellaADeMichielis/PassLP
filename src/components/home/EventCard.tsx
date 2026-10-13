@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Image } from 'expo-image';
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { PinIcon } from '@/components/ui/Icons';
@@ -49,7 +49,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
     if (onPress) {
       onPress();
     } else {
-      router.push(`/event/${event.id}` as unknown as Href);
+      router.push({ pathname: '/event/[id]', params: { id: event.id } });
     }
   }
 

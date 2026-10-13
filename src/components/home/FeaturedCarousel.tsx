@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image } from 'expo-image';
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {
   Animated,
   Dimensions,
@@ -84,7 +84,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   return (
     <View style={styles.container}>
       <Animated.FlatList
-        ref={listRef as unknown as React.Ref<FlatList<CarouselItem>>}
+        ref={listRef}
         data={carouselData}
         keyExtractor={(item) => item.virtualId}
         horizontal
@@ -154,7 +154,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
 
           return (
             <TouchableOpacity
-              onPress={() => router.push(`/event/${item.id}` as unknown as Href)}
+              onPress={() => router.push({ pathname: '/event/[id]', params: { id: item.id } })}
               activeOpacity={0.9}
               accessibilityRole="button"
               accessibilityLabel={`Evento destacado: ${item.title}`}

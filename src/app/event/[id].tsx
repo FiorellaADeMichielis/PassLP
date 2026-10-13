@@ -137,8 +137,9 @@ export default function EventDetailScreen() {
     if (!canContinue || !event) return;
 
     router.push({
-      pathname: `/checkout/${event.id}` as any,
+      pathname: '/checkout/[id]',
       params: {
+        id: event.id,
         tickets: JSON.stringify(ticketQuantities),
         vehicles: JSON.stringify(addedVehicles),
       },
