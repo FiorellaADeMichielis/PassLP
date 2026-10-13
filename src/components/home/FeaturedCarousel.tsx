@@ -1,16 +1,24 @@
-import { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image } from 'expo-image';
 import { Href, useRouter } from 'expo-router';
 import {
   Animated,
   Dimensions,
+  FlatList,
   Platform,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { EventItem } from '@/types';
+import {
+  calcularAjusteCircular,
+  calcularIndiceMedio,
+  obtenerListaCircular,
+  REPETICIONES_CARRUSEL_DEFAULT,
+} from '@/utils/carouselUtils';
 import { resolveFlyerSource } from '@/utils/imageUtils';
 
 // ─── Constantes de layout ─────────────────────────────────────────────────────
@@ -34,36 +42,91 @@ interface FeaturedCarouselProps {
   events: EventItem[];
 }
 
+type CarouselItem = EventItem & { virtualId: string; realIndex: number };
+
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 /**
- * Carrusel horizontal animado de eventos destacados.
+ * Carrusel horizontal animado e infinito de eventos destacados.
  *
+ * Despliega los pósteres de manera circular continua: al alcanzar el último evento,
+ * el primer evento se visualiza a continuación de forma natural sin rebobinar.
  * Interpola dinámicamente la escala y opacidad según el desplazamiento (scrollX),
- * destacando en grande el póster que se encuentra en el medio y achicando
- * proporcionalmente los que se mueven hacia los costados.
+ * destacando en grande el póster central y achicando los laterales.
  */
 export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const router = useRouter();
-  const [scrollX] = useState(() => new Animated.Value(0));
+  const { colors } = useAppTheme();
+  const listRef = useRef<FlatList<CarouselItem>>(null);
+
+  const initialIndex = useMemo(
+    () => calcularIndiceMedio(events.length, REPETICIONES_CARRUSEL_DEFAULT),
+    [events.length]
+  );
+  const initialOffset = initialIndex * SNAP_INTERVAL;
+
+  const [scrollX] = useState(() => new Animated.Value(initialOffset));
+
+  const carouselData = useMemo(
+    () => obtenerListaCircular(events, REPETICIONES_CARRUSEL_DEFAULT),
+    [events]
+  );
+
+  useEffect(() => {
+    if (events.length > 1) {
+      listRef.current?.scrollToOffset({
+        offset: initialOffset,
+        animated: false,
+      });
+    }
+  }, [events.length, initialOffset]);
 
   if (events.length === 0) return null;
 
   return (
     <View style={styles.container}>
       <Animated.FlatList
-        data={events}
-        keyExtractor={(item) => item.id}
+        ref={listRef as unknown as React.Ref<FlatList<CarouselItem>>}
+        data={carouselData}
+        keyExtractor={(item) => item.virtualId}
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={SNAP_INTERVAL}
         decelerationRate="fast"
         bounces={false}
+        initialScrollIndex={events.length > 1 ? initialIndex : undefined}
+        onScrollToIndexFailed={(info) => {
+          listRef.current?.scrollToOffset({
+            offset: info.index * SNAP_INTERVAL,
+            animated: false,
+          });
+        }}
         contentContainerStyle={styles.listContent}
+        getItemLayout={(_, index) => ({
+          length: SNAP_INTERVAL,
+          offset: SNAP_INTERVAL * index,
+          index,
+        })}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: Platform.OS !== 'web' }
+          { useNativeDriver: Platform.OS !== 'web' },
         )}
+        onMomentumScrollEnd={(e) => {
+          if (events.length <= 1) return;
+          const offsetX = e.nativeEvent.contentOffset.x;
+          const ajuste = calcularAjusteCircular(
+            offsetX,
+            SNAP_INTERVAL,
+            events.length,
+            REPETICIONES_CARRUSEL_DEFAULT
+          );
+          if (ajuste.necesitaAjuste) {
+            listRef.current?.scrollToOffset({
+              offset: ajuste.targetOffset,
+              animated: false,
+            });
+          }
+        }}
         scrollEventThrottle={16}
         renderItem={({ item, index }) => {
           // Rango de entrada basado en la posición de este ítem
@@ -98,6 +161,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 style={[
                   styles.posterWrapper,
                   {
+                    backgroundColor: colors.cardBorder,
                     transform: [{ scale }],
                     opacity,
                   },
@@ -142,7 +206,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     // Sombra en Android
     elevation: 6,
-    backgroundColor: '#E0E0E0',
   },
   poster: {
     width: '100%',
