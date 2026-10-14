@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { useScrollToTop } from 'expo-router';
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Keyboard,
   RefreshControl,
@@ -42,6 +43,7 @@ export default function HomeScreen() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const [gridFadeAnim] = useState(() => new Animated.Value(1));
 
   // Soporte nativo para scroll to top al tocar la pestaña de Inicio
   useScrollToTop(scrollRef);
@@ -78,11 +80,18 @@ export default function HomeScreen() {
     bootstrap();
   }, []);
 
-  // ── Filtrado por búsqueda y categoría ────────────────────────────────────
+  // ── Filtrado por búsqueda y categoría con transición suave ───────────────
   useEffect(() => {
     if (isInitialLoading) return;
 
     let cancel = false;
+
+    // Desvanecimiento suave inicial al cambiar filtro
+    Animated.timing(gridFadeAnim, {
+      toValue: 0.25,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
 
     async function applyFilters() {
       const filtered = await eventsService.getEvents(
@@ -92,6 +101,12 @@ export default function HomeScreen() {
 
       if (!cancel) {
         setEvents(filtered);
+        // Transición suave de entrada con los nuevos datos
+        Animated.timing(gridFadeAnim, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: true,
+        }).start();
       }
     }
 
@@ -100,7 +115,7 @@ export default function HomeScreen() {
     return () => {
       cancel = true;
     };
-  }, [debouncedQuery, selectedCategory, isInitialLoading]);
+  }, [debouncedQuery, selectedCategory, isInitialLoading, gridFadeAnim]);
 
   // ── Pull-to-refresh ──────────────────────────────────────────────────────
   async function handleRefresh() {
@@ -237,17 +252,19 @@ export default function HomeScreen() {
         {/* Título de sección */}
         <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Eventos</Text>
 
-        {/* Grilla de eventos */}
-        <FlatList
-          data={events}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          renderItem={renderEventItem}
-          ListEmptyComponent={renderEmptyState}
-          scrollEnabled={false}
-          contentContainerStyle={styles.grid}
-        />
+        {/* Grilla de eventos con transición suave */}
+        <Animated.View style={{ opacity: gridFadeAnim }}>
+          <FlatList
+            data={events}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            renderItem={renderEventItem}
+            ListEmptyComponent={renderEmptyState}
+            scrollEnabled={false}
+            contentContainerStyle={styles.grid}
+          />
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );

@@ -77,6 +77,7 @@ export function EventCard({ event, onPress }: EventCardProps) {
           style={styles.flyer}
           contentFit={hasError ? 'contain' : 'cover'}
           onError={() => setHasError(true)}
+          transition={200}
         />
       </TouchableOpacity>
 

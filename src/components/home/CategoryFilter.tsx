@@ -53,6 +53,7 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
                 },
               ]}
               onPress={() => onSelect(category)}
+              activeOpacity={0.75}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`Categoría ${category}`}
