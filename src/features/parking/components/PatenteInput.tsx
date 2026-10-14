@@ -80,12 +80,10 @@ export const PatenteInput = React.forwardRef<TextInput, PatenteInputProps>(
     }
 
     function handleFocus() {
-      setIsFocused(true);
       onFocus?.();
     }
 
     function handleBlur() {
-      setIsFocused(false);
       setTouched(true);
     }
 

@@ -82,8 +82,6 @@ export function ParkingSection({
     setModel('');
   }
 
-  const formatPrice = formatCurrency;
-
   return (
     <View style={styles.container}>
       {/* Botón de apertura / despliegue */}
@@ -120,7 +118,7 @@ export function ParkingSection({
                     {opt.vehicleType}:
                   </Text>
                   <Text style={styles.ratePrice} maxFontSizeMultiplier={1.3}>
-                    {formatPrice(opt.price)}
+                    {formatCurrency(opt.price)}
                   </Text>
                 </View>
               ))}
@@ -185,7 +183,7 @@ export function ParkingSection({
             <View style={styles.actionRow}>
               <View>
                 <Text style={styles.priceLabel}>Precio del pase:</Text>
-                <Text style={styles.priceValue}>{formatPrice(currentPrice)}</Text>
+                <Text style={styles.priceValue}>{formatCurrency(currentPrice)}</Text>
               </View>
 
               <TouchableOpacity
@@ -217,7 +215,7 @@ export function ParkingSection({
                   </View>
 
                   <View style={styles.vehicleRight}>
-                    <Text style={styles.vehiclePrice}>{formatPrice(item.price)}</Text>
+                    <Text style={styles.vehiclePrice}>{formatCurrency(item.price)}</Text>
                     <TouchableOpacity
                       style={styles.removeBtn}
                       onPress={() => onRemoveVehicle(item.id)}

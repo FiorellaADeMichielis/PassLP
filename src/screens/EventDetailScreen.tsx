@@ -449,3 +449,4 @@ const styles = StyleSheet.create({
     color: BTN_CONTINUAR_DISABLED_TEXT,
   },
 });
+
