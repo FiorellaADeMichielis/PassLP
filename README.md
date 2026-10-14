@@ -60,27 +60,35 @@ Aplicación móvil frontend para la cartelera, selección y compra de entradas a
 
 ## 🏛️ Arquitectura del Proyecto
 
-El código fuente se encuentra en la carpeta `src/`, siguiendo una arquitectura modular por capas desacopladas:
+El código fuente se encuentra en la carpeta `src/`, siguiendo una arquitectura modular por capas desacopladas con rutas finas:
 
 ```
 src/
 ├── __tests__/            # Pruebas unitarias automatizadas con Jest
-├── app/                  # Rutas declarativas basadas en archivos (Expo Router)
-│   ├── _layout.tsx       # Root Layout con Stack, temas y StatusBar nativa
-│   ├── index.tsx         # Pantalla principal (Cartelera de Eventos)
-│   ├── account.tsx       # Pantalla informativa de cuenta de usuario
-│   ├── event/[id].tsx    # Detalle del evento, entradas y estacionamiento
-│   └── checkout/[id].tsx # Flujo completo de compra con stepper de pasos
+├── app/                  # Rutas declarativas ultrafinas (Expo Router)
+│   ├── _layout.tsx       # Root Stack Layout con transiciones de navegación
+│   ├── (tabs)/           # Agrupación de pestañas inferiores (Bottom Tabs)
+│   │   ├── _layout.tsx   # Layout de tabs con AppTabBar personalizada
+│   │   ├── index.tsx     # Ruta fina que delega en HomeScreen
+│   │   └── account.tsx   # Ruta fina que delega en AccountScreen
+│   ├── event/[id].tsx    # Ruta fina que delega en EventDetailScreen
+│   └── checkout/[id].tsx # Ruta fina que delega en CheckoutScreen
 ├── components/           # Componentes UI organizados por contexto
-│   ├── checkout/         # Pasos del checkout (Resumen, Comprador, Asistentes, Confirmación, Modal)
+│   ├── checkout/         # Pasos del checkout (Resumen, Comprador, Asistentes, Confirmación, ProvinceSelectModal, PaymentSuccessModal)
 │   ├── event/            # Componentes de evento (Hero, Acerca de, Lotes de entradas, Estacionamiento)
-│   ├── home/             # Componentes de cartelera (Header, Carrusel, Filtros, Tarjetas, Footer)
+│   ├── home/             # Componentes de cartelera (Header, Carrusel, Filtros, Tarjetas)
+│   ├── navigation/       # Componentes de navegación (AppTabBar)
 │   └── ui/               # Componentes transversales e Iconos vectoriales nativos SVG
 ├── constants/            # Tokens de diseño y constantes de tema (Palette, Spacing, Fonts)
 ├── data/                 # Datos mock representativos de la cartelera real
 ├── features/             # Módulos de dominio autocontenidos
 │   └── parking/          # Componentes y validadores de patentes de estacionamiento
 ├── hooks/                # Custom hooks (tema institucional useAppTheme)
+├── screens/              # Pantallas desacopladas con lógica y presentación
+│   ├── AccountScreen.tsx
+│   ├── CheckoutScreen.tsx
+│   ├── EventDetailScreen.tsx
+│   └── HomeScreen.tsx
 ├── services/             # Fachada de servicios desacoplados (eventsService, checkoutService)
 ├── types/                # Contratos y tipos de dominio en TypeScript
 └── utils/                # Utilidades de imágenes, carrusel, formateo y validación
@@ -92,33 +100,34 @@ src/
 
 1. **Cartelera institucional (Inicio):**
    - Búsqueda en tiempo real de eventos por título, lugar y categoría.
-   - Filtro interactivo por categorías (Todas, Recitales, Fiestas, Boliches, Festivales).
+   - Filtro interactivo por categorías (Todas, Recitales, Fiestas, Boliches, Festivales) con transición suave.
    - Carrusel de eventos destacados con auto-scroll y banner visual.
    - Tarjetas con flyer en proporción 3:4, badges y precios actualizados.
-   - Barra de navegación inferior fija adaptada a Safe Areas nativas.
+   - Barra de navegación inferior fija (`AppTabBar`) integrada a Bottom Tabs de Expo Router con Safe Areas nativas.
 
 2. **Detalle de Evento:**
    - Hero visual con flyer oficial y paleta adaptativa de fondo.
    - Selector interactivo de lotes de entradas con control de stock y topes máximos por persona.
-   - Acordeón de compra de estacionamiento con agregado dinámico de vehículos (Auto, Moto, Camioneta) y validación de patente.
+   - Acordeón de compra de estacionamiento con agregado dinámico de vehículos (Sedán, Pickup) y validación de patente.
    - Barra inferior fija flotante con resumen de total en tiempo real y botón de continuar al checkout.
 
 3. **Flujo de Compra (Checkout):**
    - **Stepper interactivo:** Se adapta dinámicamente a 3 o 4 pasos según si las entradas están a nombre del mismo titular o requieren nominación individual.
    - **Paso 1 (Resumen):** Desglose de entradas, vehículos y cálculo transparente del 15% de service fee.
-   - **Paso 2 (Datos del Comprador):** Validación estricta de nombres sin caracteres especiales, DNI formateado con puntos, teléfono argentino, email válido y selector de provincias.
+   - **Paso 2 (Datos del Comprador):** Validación estricta de nombres sin caracteres especiales, DNI formateado con puntos, teléfono argentino, email válido y selector modal de provincias (`ProvinceSelectModal`).
    - **Paso 3 (Datos de Asistentes - Condicional):** Nominación de cada entrada individual cuando no es el mismo titular.
    - **Paso 4 (Confirmación):** Resumen final con sello de seguridad.
    - **Temporizador de 10 minutos:** Notificación de expiración y persistencia.
    - **Modal de pago integrado:** Simulación de éxito de pago con limpieza de carrito y retorno automático a cartelera.
 
 4. **Identidad visual y Accesibilidad:**
-   - Tema institucional claro uniforme con cabecera y footer oscuros institucionales (`#332F2B`).
+   - Tema institucional claro uniforme con cabecera y footer oscuros institucionales (`Palette.charcoal`).
    - Sincronización de contraste de `StatusBar` para máxima legibilidad de hora y batería en cualquier modo del SO.
    - Iconografía 100% vectorial con `react-native-svg` (sin dependencia de fuentes pesadas).
+   - Accesibilidad completa con roles semánticos, `accessibilityLabel` y `accessibilityState` en botones, steppers y acordeones.
 
 ---
 
 ## 🔄 Integración Continua (CI)
 
-El proyecto cuenta con validación automatizada mediante **GitHub Actions** en `.github/workflows/ci.yml`, asegurando que cada cambio compile limpiamente (`npm run type-check`) y respete las guías de estilo (`npm run lint`).
+El proyecto cuenta con validación automatizada mediante **GitHub Actions** en `.github/workflows/ci.yml`, asegurando que cada cambio compile limpiamente (`npm run type-check`), ejecute la suite de tests (`npm test`) y respete las guías de estilo (`npm run lint`).
