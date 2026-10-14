@@ -6,12 +6,10 @@ import {
   FlatList,
   Keyboard,
   LayoutAnimation,
-  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
-  UIManager,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -24,13 +22,6 @@ import { HomeHeader } from '@/components/home/HomeHeader';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services';
 import { EventCategory, EventItem } from '@/types';
-
-if (
-  Platform.OS === 'android' &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 // ─── Pantalla principal ────────────────────────────────────────────────────────
 
