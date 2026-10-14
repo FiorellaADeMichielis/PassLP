@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { cleanName, formatDNI } from '@/utils/validation';
+import { cleanName, formatDNI, isValidDNI, normalizeDNI } from '@/utils/validation';
 import { AttendeeData, CartTicketItem } from '@/types';
 
 interface AttendeesFormStepProps {
@@ -8,6 +8,7 @@ interface AttendeesFormStepProps {
   initialAttendees: AttendeeData[];
   onSubmit: (attendees: AttendeeData[]) => void;
   onBack: () => void;
+  onFocusField?: (offset: number) => void;
 }
 
 /**
@@ -22,6 +23,7 @@ export function AttendeesFormStep({
   initialAttendees,
   onSubmit,
   onBack,
+  onFocusField,
 }: AttendeesFormStepProps) {
   // Inicializa o reutiliza los asistentes
   const [attendees, setAttendees] = useState<AttendeeData[]>(() => {
@@ -49,6 +51,16 @@ export function AttendeesFormStep({
   });
 
   const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+  const inputRefs = useRef<
+    Record<
+      string,
+      {
+        firstName: TextInput | null;
+        lastName: TextInput | null;
+        dni: TextInput | null;
+      }
+    >
+  >({});
 
   function handleFieldChange(
     attendeeId: string,
@@ -105,8 +117,8 @@ export function AttendeesFormStep({
       if (!dniDigits) {
         attErrors.dni = 'Ingresá el DNI';
         hasError = true;
-      } else if (dniDigits.length !== 8) {
-        attErrors.dni = 'Debe tener exactamente 8 dígitos';
+      } else if (!isValidDNI(dniDigits)) {
+        attErrors.dni = 'Debe tener entre 7 y 8 dígitos';
         hasError = true;
       }
 
@@ -121,7 +133,11 @@ export function AttendeesFormStep({
 
   function handleNext() {
     if (validate()) {
-      onSubmit(attendees);
+      const normalizedAttendees = attendees.map((att) => ({
+        ...att,
+        dni: normalizeDNI(att.dni),
+      }));
+      onSubmit(normalizedAttendees);
     }
   }
 
@@ -137,7 +153,7 @@ export function AttendeesFormStep({
 
       {/* Lista de tarjetas por entrada */}
       <View style={styles.cardsList}>
-        {attendees.map((att) => {
+        {attendees.map((att, index) => {
           const attErr = errors[att.id] || {};
 
           return (
@@ -155,6 +171,16 @@ export function AttendeesFormStep({
                     Nombre <Text style={styles.req}>*</Text>
                   </Text>
                   <TextInput
+                    ref={(el) => {
+                      if (!inputRefs.current[att.id]) {
+                        inputRefs.current[att.id] = {
+                          firstName: null,
+                          lastName: null,
+                          dni: null,
+                        };
+                      }
+                      inputRefs.current[att.id].firstName = el;
+                    }}
                     style={[styles.input, attErr.firstName && styles.inputError]}
                     placeholder="Nombre"
                     placeholderTextColor="#999999"
@@ -167,6 +193,11 @@ export function AttendeesFormStep({
                     autoComplete="name-given"
                     accessibilityLabel={`Nombre del asistente ${att.attendeeNumber}`}
                     returnKeyType="next"
+                    blurOnSubmit={false}
+                    onFocus={() => onFocusField?.(145 + index * 210)}
+                    onSubmitEditing={() =>
+                      inputRefs.current[att.id]?.lastName?.focus()
+                    }
                   />
                   {attErr.firstName ? (
                     <Text style={styles.errorText}>{attErr.firstName}</Text>
@@ -178,6 +209,16 @@ export function AttendeesFormStep({
                     Apellido <Text style={styles.req}>*</Text>
                   </Text>
                   <TextInput
+                    ref={(el) => {
+                      if (!inputRefs.current[att.id]) {
+                        inputRefs.current[att.id] = {
+                          firstName: null,
+                          lastName: null,
+                          dni: null,
+                        };
+                      }
+                      inputRefs.current[att.id].lastName = el;
+                    }}
                     style={[styles.input, attErr.lastName && styles.inputError]}
                     placeholder="Apellido"
                     placeholderTextColor="#999999"
@@ -190,6 +231,9 @@ export function AttendeesFormStep({
                     autoComplete="family-name"
                     accessibilityLabel={`Apellido del asistente ${att.attendeeNumber}`}
                     returnKeyType="next"
+                    blurOnSubmit={false}
+                    onFocus={() => onFocusField?.(145 + index * 210)}
+                    onSubmitEditing={() => inputRefs.current[att.id]?.dni?.focus()}
                   />
                   {attErr.lastName ? (
                     <Text style={styles.errorText}>{attErr.lastName}</Text>
@@ -202,6 +246,16 @@ export function AttendeesFormStep({
                   DNI <Text style={styles.req}>*</Text>
                 </Text>
                 <TextInput
+                  ref={(el) => {
+                    if (!inputRefs.current[att.id]) {
+                      inputRefs.current[att.id] = {
+                        firstName: null,
+                        lastName: null,
+                        dni: null,
+                      };
+                    }
+                    inputRefs.current[att.id].dni = el;
+                  }}
                   style={[styles.input, attErr.dni && styles.inputError]}
                   placeholder="12.345.678"
                   placeholderTextColor="#999999"
@@ -210,7 +264,22 @@ export function AttendeesFormStep({
                   keyboardType="numeric"
                   maxLength={10}
                   accessibilityLabel={`DNI del asistente ${att.attendeeNumber}`}
-                  returnKeyType="next"
+                  returnKeyType={index < attendees.length - 1 ? 'next' : 'done'}
+                  blurOnSubmit={index === attendees.length - 1}
+                  onFocus={() => onFocusField?.(215 + index * 210)}
+                  onBlur={() => {
+                    if (att.dni) {
+                      handleFieldChange(att.id, 'dni', normalizeDNI(att.dni));
+                    }
+                  }}
+                  onSubmitEditing={() => {
+                    if (index < attendees.length - 1) {
+                      const nextId = attendees[index + 1]?.id;
+                      if (nextId) {
+                        inputRefs.current[nextId]?.firstName?.focus();
+                      }
+                    }
+                  }}
                 />
                 {attErr.dni ? (
                   <Text style={styles.errorText}>{attErr.dni}</Text>

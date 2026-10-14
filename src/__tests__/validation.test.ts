@@ -3,7 +3,9 @@ import {
   cleanName,
   formatDNI,
   formatPhone,
+  isValidDNI,
   isValidEmail,
+  normalizeDNI,
 } from '../utils/validation';
 
 describe('validation utils', () => {
@@ -26,18 +28,62 @@ describe('validation utils', () => {
   });
 
   describe('formatDNI', () => {
-    it('formatea progresivamente de 1 a 8 dígitos con puntos de miles', () => {
+    it('retorna dígitos directos para 1 a 6 caracteres', () => {
       expect(formatDNI('1')).toBe('1');
       expect(formatDNI('12')).toBe('12');
-      expect(formatDNI('123')).toBe('12.3');
-      expect(formatDNI('12345')).toBe('12.345');
-      expect(formatDNI('123456')).toBe('12.345.6');
+      expect(formatDNI('123')).toBe('123');
+      expect(formatDNI('12345')).toBe('12345');
+      expect(formatDNI('123456')).toBe('123456');
+    });
+
+    it('formatea automáticamente DNI de 7 dígitos como X.XXX.XXX', () => {
+      expect(formatDNI('8123456')).toBe('8.123.456');
+      expect(formatDNI('8.123.456')).toBe('8.123.456');
+    });
+
+    it('formatea automáticamente DNI de 8 dígitos como XX.XXX.XXX', () => {
       expect(formatDNI('12345678')).toBe('12.345.678');
+      expect(formatDNI('12.345.678')).toBe('12.345.678');
+      expect(formatDNI('40123456')).toBe('40.123.456');
     });
 
     it('descarta caracteres no numéricos y limita a 8 dígitos máximos', () => {
       expect(formatDNI('40.123.456 extra')).toBe('40.123.456');
       expect(formatDNI('999999999999')).toBe('99.999.999');
+    });
+  });
+
+  describe('normalizeDNI', () => {
+    it('normaliza correctamente DNIs de 7 dígitos a formato X.XXX.XXX', () => {
+      expect(normalizeDNI('8123456')).toBe('8.123.456');
+      expect(normalizeDNI('8.123.456')).toBe('8.123.456');
+    });
+
+    it('normaliza correctamente DNIs de 8 dígitos a formato XX.XXX.XXX', () => {
+      expect(normalizeDNI('12345678')).toBe('12.345.678');
+      expect(normalizeDNI('12.345.678')).toBe('12.345.678');
+    });
+
+    it('devuelve dígitos simples si tiene menos de 7 caracteres', () => {
+      expect(normalizeDNI('12345')).toBe('12345');
+    });
+  });
+
+  describe('isValidDNI', () => {
+    it('acepta DNIs argentinos válidos de 7 y 8 dígitos', () => {
+      expect(isValidDNI('8123456')).toBe(true);
+      expect(isValidDNI('8.123.456')).toBe(true);
+      expect(isValidDNI('12345678')).toBe(true);
+      expect(isValidDNI('12.345.678')).toBe(true);
+      expect(isValidDNI('40.123.456')).toBe(true);
+    });
+
+    it('rechaza DNIs con menos de 7 o más de 8 dígitos', () => {
+      expect(isValidDNI('')).toBe(false);
+      expect(isValidDNI('123456')).toBe(false); // 6 dígitos
+      expect(isValidDNI('12.345.6')).toBe(false);
+      expect(isValidDNI('123456789')).toBe(false); // 9 dígitos
+      expect(isValidDNI('abcdefgh')).toBe(false);
     });
   });
 

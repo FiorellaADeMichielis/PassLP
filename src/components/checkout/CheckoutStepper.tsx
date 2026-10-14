@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Palette } from '@/constants/theme';
 import { CheckIcon } from '../ui/Icons';
 
 export interface StepItem {
@@ -16,9 +17,9 @@ interface CheckoutStepperProps {
  * Indicador visual de pasos horizontales para el Checkout (S3).
  *
  * Colores según PASSLP_REFERENCIA.md §5.1 y §9.1:
- * - Paso actual: #1B9F00
- * - Paso completado: #41AA2B
- * - Paso pendiente: #BCBCBC
+ * - Paso actual: Palette.stepCurrent
+ * - Paso completado: Palette.stepCompleted
+ * - Paso pendiente: Palette.stepPending
  */
 export function CheckoutStepper({ steps, currentStep }: CheckoutStepperProps) {
   return (
@@ -29,9 +30,9 @@ export function CheckoutStepper({ steps, currentStep }: CheckoutStepperProps) {
           const isCurrent = step.id === currentStep;
           const isPending = step.id > currentStep;
 
-          let circleBg = '#BCBCBC';
-          if (isCurrent) circleBg = '#1B9F00';
-          if (isCompleted) circleBg = '#41AA2B';
+          let circleBg: string = Palette.stepPending;
+          if (isCurrent) circleBg = Palette.stepCurrent;
+          if (isCompleted) circleBg = Palette.stepCompleted;
 
           return (
             <React.Fragment key={step.id}>
@@ -49,7 +50,7 @@ export function CheckoutStepper({ steps, currentStep }: CheckoutStepperProps) {
               <View style={styles.stepItem}>
                 <View style={[styles.circle, { backgroundColor: circleBg }]}>
                   {isCompleted ? (
-                    <CheckIcon size={13} color="#FFFFFF" strokeWidth={3} />
+                    <CheckIcon size={13} color={Palette.white} strokeWidth={3} />
                   ) : (
                     <Text style={styles.circleNumber}>{step.id}</Text>
                   )}
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 14,
     paddingHorizontal: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     borderRadius: 14,
     marginHorizontal: 12,
     marginTop: 10,
@@ -102,26 +103,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
-    shadowColor: '#000000',
+    shadowColor: Palette.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
   circleNumber: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontSize: 13,
     fontWeight: '800',
   },
   stepLabel: {
     fontSize: 10.5,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     textAlign: 'center',
     lineHeight: 13,
   },
   stepLabelCurrent: {
-    color: '#1B9F00',
+    color: Palette.stepCurrent,
     fontWeight: '900',
   },
   stepLabelPending: {
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     marginHorizontal: -4,
   },
   connectorLineActive: {
-    backgroundColor: '#41AA2B',
+    backgroundColor: Palette.stepCompleted,
   },
 });
 

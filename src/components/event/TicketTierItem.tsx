@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { MinusIcon, PlusIcon } from '@/components/ui/Icons';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { TicketTier } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -60,7 +60,11 @@ export function TicketTierItem({
         </Text>
 
         {tier.description ? (
-          <Text style={styles.description} maxFontSizeMultiplier={1.3}>
+          <Text
+            style={styles.description}
+            selectable={true}
+            maxFontSizeMultiplier={1.3}
+          >
             {tier.description}
           </Text>
         ) : null}
@@ -80,8 +84,9 @@ export function TicketTierItem({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Quitar una entrada de ${tier.name}`}
+            accessibilityState={{ disabled: isMin }}
           >
-            <MinusIcon size={12} color={isMin ? '#666666' : '#FFFFFF'} />
+            <MinusIcon size={12} color={isMin ? Palette.textSecondary : Palette.white} />
           </TouchableOpacity>
 
           <Text style={styles.quantityText} maxFontSizeMultiplier={1.3}>
@@ -95,8 +100,9 @@ export function TicketTierItem({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Agregar una entrada de ${tier.name}`}
+            accessibilityState={{ disabled: isMax }}
           >
-            <PlusIcon size={12} color={isMax ? '#666666' : '#FFFFFF'} />
+            <PlusIcon size={12} color={isMax ? Palette.textSecondary : Palette.white} />
           </TouchableOpacity>
         </View>
 
@@ -114,14 +120,14 @@ export function TicketTierItem({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     borderRadius: 12,
     padding: Spacing.three,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: Spacing.two,
-    shadowColor: '#000000',
+    shadowColor: Palette.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -143,7 +149,7 @@ const styles = StyleSheet.create({
   tierLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#E85D04',
+    color: Palette.primaryHover,
     letterSpacing: 0.5,
   },
   tierType: {
@@ -154,17 +160,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     lineHeight: 18,
   },
   description: {
     fontSize: 11,
-    color: '#666666',
+    color: Palette.textSecondary,
   },
   price: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#1A1A1A',
+    color: Palette.textPrimary,
     marginTop: 2,
   },
   stepperWrapper: {
@@ -193,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   quantityText: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontSize: 14,
     fontWeight: '700',
     minWidth: 18,
@@ -201,7 +207,7 @@ const styles = StyleSheet.create({
   },
   lastUnitsText: {
     fontSize: 9,
-    color: '#E63946',
+    color: Palette.danger,
     fontWeight: '600',
   },
 });

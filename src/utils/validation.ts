@@ -37,13 +37,39 @@ export function cleanName(text: string): string {
 }
 
 /**
- * Formatea un número de DNI argentino con separadores de miles de hasta 8 dígitos (ej: 12.345.678).
+ * Formatea un número de DNI argentino con separadores de miles de 7 u 8 dígitos
+ * (ej: 8.123.456 o 12.345.678).
  */
 export function formatDNI(text: string): string {
   const digits = text.replace(/\D/g, '').slice(0, 8);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length < 7) return digits;
+  if (digits.length === 7) {
+    return `${digits.slice(0, 1)}.${digits.slice(1, 4)}.${digits.slice(4)}`;
+  }
   return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+}
+
+/**
+ * Normaliza un DNI con formato de 7 u 8 dígitos con sus puntos de miles correspondientes
+ * (utilizado al perder foco o validar).
+ */
+export function normalizeDNI(text: string): string {
+  const digits = text.replace(/\D/g, '').slice(0, 8);
+  if (digits.length === 7) {
+    return `${digits.slice(0, 1)}.${digits.slice(1, 4)}.${digits.slice(4)}`;
+  }
+  if (digits.length === 8) {
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  }
+  return digits;
+}
+
+/**
+ * Valida si un DNI argentino tiene entre 7 y 8 dígitos numéricos.
+ */
+export function isValidDNI(dni: string): boolean {
+  const digits = dni.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 8;
 }
 
 /**

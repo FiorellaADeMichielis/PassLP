@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -12,6 +13,8 @@ interface HomeHeaderProps {
   searchQuery: string;
   /** Callback que se ejecuta al cambiar el texto del buscador. */
   onSearchChange: (text: string) => void;
+  /** Callback opcional al presionar el logotipo de PassLP. */
+  onLogoPress?: () => void;
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -23,9 +26,23 @@ interface HomeHeaderProps {
  * buscador en píldora con icono SVG vectorial nativo y botón "Ingresar".
  * Se adapta automáticamente al tema del teléfono para garantizar contraste óptimo.
  */
-export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
+export function HomeHeader({
+  searchQuery,
+  onSearchChange,
+  onLogoPress,
+}: HomeHeaderProps) {
   const router = useRouter();
   const { colors } = useAppTheme();
+  const isNavigatingRef = useRef(false);
+
+  function handleIngresarPress() {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 500);
+    router.push('/account');
+  }
 
   return (
     <View
@@ -38,12 +55,20 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
       ]}
     >
       {/* Logotipo oficial sobre fondo oscuro */}
-      <Image
-        source={require('@/assets/logo-on-dark.png')}
-        style={styles.logoImage}
-        contentFit="contain"
-        accessibilityLabel="Logotipo PassLP"
-      />
+      <TouchableOpacity
+        onPress={onLogoPress}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel="Ir al inicio de PassLP"
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
+        <Image
+          source={require('@/assets/logo-on-dark.png')}
+          style={styles.logoImage}
+          contentFit="contain"
+          accessibilityLabel="Logotipo PassLP"
+        />
+      </TouchableOpacity>
 
       {/* Buscador */}
       <View style={[styles.searchWrapper, { backgroundColor: colors.searchBg }]}>
@@ -63,9 +88,10 @@ export function HomeHeader({ searchQuery, onSearchChange }: HomeHeaderProps) {
       {/* Botón Ingresar */}
       <TouchableOpacity
         style={[styles.btnIngresar, { backgroundColor: colors.btnIngresarBg }]}
-        onPress={() => router.push('/account')}
+        onPress={handleIngresarPress}
         accessibilityRole="button"
         accessibilityLabel="Ingresar a tu cuenta"
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Text style={[styles.btnIngresarText, { color: colors.btnIngresarText }]}>
           Ingresar

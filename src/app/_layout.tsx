@@ -20,22 +20,29 @@ export default function RootLayout() {
     SplashScreen.hideAsync();
   }, []);
 
+  const customTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: colors.headerBg,
+    },
+  };
+
   return (
-    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={customTheme}>
       <StatusBar style={colors.statusBarStyle} />
       <Stack
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
           contentStyle: {
-            backgroundColor: colors.screenBg,
+            backgroundColor: colors.headerBg,
           },
         }}
       >
-        <Stack.Screen name="index" />
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="event/[id]" />
         <Stack.Screen name="checkout/[id]" />
-        <Stack.Screen name="account" />
       </Stack>
     </ThemeProvider>
   );

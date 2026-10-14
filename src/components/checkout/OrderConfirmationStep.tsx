@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ShieldCheckIcon } from '../ui/Icons';
-import { checkoutService } from '@/services/checkoutService';
+import { formatCurrency } from '@/utils/formatters';
 import {
   AttendeeData,
   BuyerData,
@@ -52,9 +52,10 @@ export function OrderConfirmationStep({
     <View style={styles.container}>
       {/* Título Principal */}
       <View style={styles.card}>
-        <Text style={styles.mainTitle}>Confirmá tu compra</Text>
-        <Text style={styles.eventTitle}>{event.title}</Text>
-        <Text style={styles.eventDate}>
+        <Text style={styles.eventTitle} selectable={true}>
+          {event.title}
+        </Text>
+        <Text style={styles.eventDate} selectable={true}>
           {event.date} • {event.time}
         </Text>
       </View>
@@ -66,34 +67,42 @@ export function OrderConfirmationStep({
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Nombre y Apellido</Text>
-          <Text style={styles.infoValue}>
+          <Text style={styles.infoValue} selectable={true}>
             {buyer.firstName} {buyer.lastName}
           </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>DNI</Text>
-          <Text style={styles.infoValue}>{buyer.dni}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.dni}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Teléfono</Text>
-          <Text style={styles.infoValue}>{buyer.phone}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.phone}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Email</Text>
-          <Text style={styles.infoValue}>{buyer.email}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.email}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Provincia</Text>
-          <Text style={styles.infoValue}>{buyer.province}</Text>
+          <Text style={styles.infoValue} selectable={true}>
+            {buyer.province}
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Mismo titular en todas las entradas</Text>
-          <Text style={styles.infoValue}>
+          <Text style={styles.infoValue} selectable={true}>
             {buyer.allTicketsSameName ? 'Sí' : 'No'}
           </Text>
         </View>
@@ -106,10 +115,12 @@ export function OrderConfirmationStep({
             {attendees.map((att) => (
               <View key={att.id} style={styles.attendeeRow}>
                 <Text style={styles.attendeeBadge}>#{att.attendeeNumber}</Text>
-                <Text style={styles.attendeeName}>
+                <Text style={styles.attendeeName} selectable={true}>
                   {att.firstName} {att.lastName}
                 </Text>
-                <Text style={styles.attendeeDni}>DNI {att.dni}</Text>
+                <Text style={styles.attendeeDni} selectable={true}>
+                  DNI {att.dni}
+                </Text>
               </View>
             ))}
           </View>
@@ -134,7 +145,7 @@ export function OrderConfirmationStep({
               </Text>
             </View>
             <Text style={styles.itemPrice}>
-              {checkoutService.formatCurrency(t.subtotal)}
+              {formatCurrency(t.subtotal)}
             </Text>
           </View>
         ))}
@@ -149,7 +160,7 @@ export function OrderConfirmationStep({
               <Text style={styles.itemQuantity}>Patente: {v.plate}</Text>
             </View>
             <Text style={styles.itemPrice}>
-              {checkoutService.formatCurrency(v.price)}
+              {formatCurrency(v.price)}
             </Text>
           </View>
         ))}
@@ -160,7 +171,7 @@ export function OrderConfirmationStep({
         <View style={styles.costRow}>
           <Text style={styles.costLabel}>Costo del carrito</Text>
           <Text style={styles.costValue}>
-            {checkoutService.formatCurrency(cartCost)}
+            {formatCurrency(cartCost)}
           </Text>
         </View>
 
@@ -169,7 +180,7 @@ export function OrderConfirmationStep({
             Costo por servicio ({pricing.serviceFeePercentage}%)
           </Text>
           <Text style={styles.costValue}>
-            {checkoutService.formatCurrency(pricing.serviceFeeAmount)}
+            {formatCurrency(pricing.serviceFeeAmount)}
           </Text>
         </View>
 
@@ -178,7 +189,7 @@ export function OrderConfirmationStep({
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total estimado</Text>
           <Text style={styles.totalValue}>
-            {checkoutService.formatCurrency(pricing.total)}
+            {formatCurrency(pricing.total)}
           </Text>
         </View>
       </View>
@@ -200,6 +211,7 @@ export function OrderConfirmationStep({
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Continuar al pago"
+          accessibilityState={{ disabled: isSubmitting, busy: isSubmitting }}
         >
           <Text style={styles.confirmButtonText}>
             {isSubmitting ? 'PROCESANDO...' : 'CONTINUAR AL PAGO'}

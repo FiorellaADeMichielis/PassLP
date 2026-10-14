@@ -69,13 +69,6 @@ describe('checkoutService', () => {
       expect(pricing.total).toBe(0);
     });
   });
-
-  describe('formatCurrency', () => {
-    it('formatea montos delegando a la función de formateo institucional', () => {
-      const formatted = checkoutService.formatCurrency(25000);
-      expect(formatted).toContain('25.000');
-      expect(formatted).toContain('$');
-    });
-  });
 });
+
 

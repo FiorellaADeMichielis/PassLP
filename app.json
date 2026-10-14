@@ -6,11 +6,15 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "passlp",
+    "backgroundColor": "#332F2B",
     "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/icon.png"
     },
     "android": {
+      "package": "com.passlp.app",
+      "versionCode": 1,
+      "backgroundColor": "#332F2B",
       "adaptiveIcon": {
         "backgroundColor": "#332F2B",
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -43,7 +47,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f7c5b733-0ff3-4ce9-801e-09fcfda718fa"
+      }
     }
   }
 }
-

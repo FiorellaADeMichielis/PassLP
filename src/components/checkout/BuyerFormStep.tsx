@@ -1,30 +1,22 @@
 import React, { useRef, useState } from 'react';
 import {
-  FlatList,
-  Modal,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { ProvinceSelectModal } from './ProvinceSelectModal';
 import { CheckIcon } from '../ui/Icons';
 import { BuyerData } from '@/types';
 import {
-  ARGENTINE_PROVINCES,
   cleanName,
   formatDNI,
   formatPhone,
+  isValidDNI,
   isValidEmail,
+  normalizeDNI,
 } from '@/utils/validation';
-
-export {
-  ARGENTINE_PROVINCES,
-  cleanName,
-  formatDNI,
-  formatPhone,
-  isValidEmail,
-};
 
 interface BuyerFormStepProps {
   initialData: BuyerData;
@@ -102,8 +94,8 @@ export function BuyerFormStep({
     const dniDigits = formData.dni.replace(/\D/g, '');
     if (!dniDigits) {
       newErrors.dni = 'Ingresá tu DNI';
-    } else if (dniDigits.length !== 8) {
-      newErrors.dni = 'El DNI debe tener exactamente 8 dígitos';
+    } else if (!isValidDNI(dniDigits)) {
+      newErrors.dni = 'El DNI debe tener entre 7 y 8 dígitos';
     }
 
     const phoneDigits = formData.phone.replace(/\D/g, '');
@@ -137,7 +129,11 @@ export function BuyerFormStep({
 
   function handleNext() {
     if (validate()) {
-      onSubmit(formData);
+      const normalizedData: BuyerData = {
+        ...formData,
+        dni: normalizeDNI(formData.dni),
+      };
+      onSubmit(normalizedData);
     }
   }
 
@@ -220,6 +216,14 @@ export function BuyerFormStep({
               returnKeyType="next"
               blurOnSubmit={false}
               onFocus={() => onFocusField?.(110)}
+              onBlur={() => {
+                if (formData.dni) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    dni: normalizeDNI(prev.dni),
+                  }));
+                }
+              }}
               onSubmitEditing={() => phoneRef.current?.focus()}
             />
             {errors.dni && <Text style={styles.errorText}>{errors.dni}</Text>}
@@ -418,53 +422,12 @@ export function BuyerFormStep({
       </View>
 
       {/* Modal para selección de provincia */}
-      <Modal
+      <ProvinceSelectModal
         visible={showProvinceModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowProvinceModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Seleccioná tu provincia</Text>
-            <FlatList
-              data={ARGENTINE_PROVINCES}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.provinceItem,
-                    formData.province === item && styles.provinceItemSelected,
-                  ]}
-                  onPress={() => {
-                    handleChange('province', item);
-                    setShowProvinceModal(false);
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.provinceText,
-                      formData.province === item && styles.provinceTextSelected,
-                    ]}
-                  >
-                    {item}
-                  </Text>
-                  {formData.province === item && (
-                    <CheckIcon size={14} color="#1B9F00" strokeWidth={3} />
-                  )}
-                </TouchableOpacity>
-              )}
-              style={styles.provincesList}
-            />
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setShowProvinceModal(false)}
-            >
-              <Text style={styles.modalCloseButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        selectedProvince={formData.province}
+        onSelect={(province) => handleChange('province', province)}
+        onClose={() => setShowProvinceModal(false)}
+      />
     </View>
   );
 }
@@ -643,66 +606,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.6,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    width: '100%',
-    maxHeight: '75%',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6,
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#111827',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  provincesList: {
-    marginVertical: 6,
-  },
-  provinceItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  provinceItemSelected: {
-    backgroundColor: '#F0FDF4',
-  },
-  provinceText: {
-    fontSize: 13.5,
-    color: '#332F2B',
-  },
-  provinceTextSelected: {
-    fontWeight: '800',
-    color: '#1B9F00',
-  },
-  modalCloseButton: {
-    backgroundColor: '#332F2B',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  modalCloseButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 13,
-  },
 });
+
 
