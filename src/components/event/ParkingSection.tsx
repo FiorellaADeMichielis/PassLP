@@ -91,6 +91,7 @@ export function ParkingSection({
         activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityLabel="Desplegar opciones de estacionamiento"
+        accessibilityState={{ expanded: isExpanded }}
       >
         <View style={styles.toggleLeft}>
           <ParkingBadgeIcon size={20} color="#0D4F9C" />
@@ -192,6 +193,7 @@ export function ParkingSection({
                 disabled={!isAddEnabled}
                 accessibilityRole="button"
                 accessibilityLabel="Agregar vehículo de estacionamiento"
+                accessibilityState={{ disabled: !isAddEnabled }}
               >
                 <Text style={styles.addBtnText}>AGREGAR</Text>
               </TouchableOpacity>

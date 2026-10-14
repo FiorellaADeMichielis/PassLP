@@ -84,6 +84,7 @@ export function TicketTierItem({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Quitar una entrada de ${tier.name}`}
+            accessibilityState={{ disabled: isMin }}
           >
             <MinusIcon size={12} color={isMin ? '#666666' : '#FFFFFF'} />
           </TouchableOpacity>
@@ -99,6 +100,7 @@ export function TicketTierItem({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             accessibilityRole="button"
             accessibilityLabel={`Agregar una entrada de ${tier.name}`}
+            accessibilityState={{ disabled: isMax }}
           >
             <PlusIcon size={12} color={isMax ? '#666666' : '#FFFFFF'} />
           </TouchableOpacity>

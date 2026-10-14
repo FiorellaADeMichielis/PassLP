@@ -211,6 +211,7 @@ export function OrderConfirmationStep({
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Continuar al pago"
+          accessibilityState={{ disabled: isSubmitting, busy: isSubmitting }}
         >
           <Text style={styles.confirmButtonText}>
             {isSubmitting ? 'PROCESANDO...' : 'CONTINUAR AL PAGO'}
