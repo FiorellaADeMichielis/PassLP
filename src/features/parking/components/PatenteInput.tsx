@@ -56,7 +56,6 @@ export const PatenteInput = React.forwardRef<TextInput, PatenteInputProps>(
     ref,
   ) {
     const { colors } = useAppTheme();
-    const [, setIsFocused] = useState(false);
     const [touched, setTouched] = useState(false);
 
     // Si el valor se limpia (ej. al agregar vehículo con éxito), reiniciamos el estado touched
