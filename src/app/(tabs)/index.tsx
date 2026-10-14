@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Image } from 'expo-image';
+import { useScrollToTop } from 'expo-router';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,7 +17,6 @@ import { StatusBar } from 'expo-status-bar';
 import { CategoryFilter } from '@/components/home/CategoryFilter';
 import { EventCard } from '@/components/home/EventCard';
 import { FeaturedCarousel } from '@/components/home/FeaturedCarousel';
-import { HomeFooter } from '@/components/home/HomeFooter';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services';
@@ -42,6 +42,9 @@ export default function HomeScreen() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+
+  // Soporte nativo para scroll to top al tocar la pestaña de Inicio
+  useScrollToTop(scrollRef);
 
   // La búsqueda está activa cuando hay al menos un carácter con significado
   const isSearching = searchQuery.trim().length > 0;
@@ -71,48 +74,60 @@ export default function HomeScreen() {
         setIsInitialLoading(false);
       }
     }
+
     bootstrap();
   }, []);
 
-  // ── Carga de eventos al cambiar filtros o debounced query ─────────────────
+  // ── Filtrado por búsqueda y categoría ────────────────────────────────────
   useEffect(() => {
     if (isInitialLoading) return;
 
-    let isMounted = true;
+    let cancel = false;
 
-    eventsService
-      .getEvents(
-        selectedCategory === 'Todas' ? undefined : selectedCategory,
-        debouncedQuery.trim() || undefined,
-      )
-      .then((result) => {
-        if (isMounted) {
-          setEvents(result);
-        }
-      });
+    async function applyFilters() {
+      const filtered = await eventsService.getEvents(
+        selectedCategory,
+        debouncedQuery
+      );
+
+      if (!cancel) {
+        setEvents(filtered);
+      }
+    }
+
+    applyFilters();
 
     return () => {
-      isMounted = false;
+      cancel = true;
     };
-  }, [selectedCategory, debouncedQuery, isInitialLoading]);
+  }, [debouncedQuery, selectedCategory, isInitialLoading]);
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
+  // ── Pull-to-refresh ──────────────────────────────────────────────────────
+  async function handleRefresh() {
+    setRefreshing(true);
+    try {
+      const [cats, featured, refreshedEvents] = await Promise.all([
+        eventsService.getCategories(),
+        eventsService.getFeaturedEvents(),
+        eventsService.getEvents(selectedCategory, debouncedQuery),
+      ]);
+      setCategories(cats);
+      setFeaturedEvents(featured);
+      setEvents(refreshedEvents);
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
+  // ── Handlers de interacción ──────────────────────────────────────────────
   function handleCategorySelect(category: EventCategory) {
     setSelectedCategory(category);
   }
 
   function handleSearchChange(text: string) {
     setSearchQuery(text);
-    // Si el usuario borró todo el texto, limpiamos el debouncedQuery de inmediato
-    if (text.trim() === '') {
-      setDebouncedQuery('');
-    }
   }
 
-  /**
-   * Restablece instantáneamente la búsqueda, el filtro de categorías y la posición
-   * de scroll al tocar el logo de PassLP o el botón de inicio del footer.
-   */
   function handleResetToHome() {
     Keyboard.dismiss();
     setSearchQuery('');
@@ -121,27 +136,7 @@ export default function HomeScreen() {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }
 
-  async function handleRefresh() {
-    setRefreshing(true);
-    try {
-      const [cats, featured, evts] = await Promise.all([
-        eventsService.getCategories(),
-        eventsService.getFeaturedEvents(),
-        eventsService.getEvents(
-          selectedCategory === 'Todas' ? undefined : selectedCategory,
-          searchQuery.trim() || undefined,
-        ),
-      ]);
-      setCategories(cats);
-      setFeaturedEvents(featured);
-      setEvents(evts);
-    } finally {
-      setRefreshing(false);
-    }
-  }
-
-  // ── Render helpers ─────────────────────────────────────────────────────────
-
+  // ── Render Helpers ────────────────────────────────────────────────────────
   function renderEventItem({ item }: { item: EventItem }) {
     return (
       <View style={styles.cardWrapper}>
@@ -151,51 +146,53 @@ export default function HomeScreen() {
   }
 
   function renderEmptyState() {
-    if (isInitialLoading) return null;
+    if (isInitialLoading) {
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#F77F00" style={styles.loader} />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+            Cargando eventos...
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.emptyState}>
-        <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-          No se encontraron eventos{searchQuery.trim() ? ` para "${searchQuery.trim()}"` : ''}.
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+          {isSearching
+            ? `No encontramos eventos para "${searchQuery}".`
+            : `No hay eventos disponibles en "${selectedCategory}".`}
         </Text>
       </View>
     );
   }
 
-  // ── Pantalla de carga inicial al abrir la app con splash-icon en alta definición ───
   if (isInitialLoading) {
     return (
       <SafeAreaView
-        style={[styles.fullLoaderContainer, { backgroundColor: colors.screenBg }]}
-        edges={['top', 'bottom']}
+        style={[styles.safeArea, { backgroundColor: colors.headerBg }]}
+        edges={['top']}
       >
         <StatusBar style={colors.statusBarStyle} />
-        <View style={styles.fullLoaderContent}>
-          <Image
-            source={
-              colors.screenBg === '#12100E'
-                ? require('@/assets/splash-icon-dark.png')
-                : require('@/assets/splash-icon.png')
-            }
-            style={styles.splashIconImage}
-            contentFit="contain"
-            priority="high"
-            accessibilityLabel="PassLP"
-          />
-          <ActivityIndicator
-            size="large"
-            color="#F77F00"
-            style={styles.splashLoader}
-            accessibilityLabel="Cargando cartelera de eventos"
-          />
-          <Text style={[styles.splashLoadingText, { color: colors.textSecondary }]}>
-            Cargando cartelera de eventos...
-          </Text>
+        <View style={[styles.fullLoaderContainer, { backgroundColor: colors.headerBg }]}>
+          <View style={styles.fullLoaderContent}>
+            <Image
+              source={require('@/assets/splash-icon-dark.png')}
+              style={styles.splashIconImage}
+              contentFit="contain"
+              accessibilityLabel="PassLP Logo"
+            />
+            <ActivityIndicator size="large" color="#F77F00" style={styles.splashLoader} />
+            <Text style={[styles.splashLoadingText, { color: '#D0CBC5' }]}>
+              Iniciando PassLP...
+            </Text>
+          </View>
         </View>
       </SafeAreaView>
     );
   }
 
-  // ── Layout ─────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.headerBg }]}
@@ -203,20 +200,19 @@ export default function HomeScreen() {
     >
       <StatusBar style={colors.statusBarStyle} />
 
-      {/* Header siempre visible arriba */}
+      {/* Cabecera superior con buscador */}
       <HomeHeader
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
         onLogoPress={handleResetToHome}
       />
 
+      {/* Contenedor scrolleable vertical */}
       <ScrollView
         ref={scrollRef}
         style={[styles.scroll, { backgroundColor: colors.screenBg }]}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -226,7 +222,7 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* Carrusel de destacados (se oculta automáticamente al buscar) */}
+        {/* Carrusel de eventos destacados (se oculta durante la búsqueda) */}
         {featuredEvents.length > 0 && !isSearching && (
           <FeaturedCarousel events={featuredEvents} />
         )}
@@ -253,9 +249,6 @@ export default function HomeScreen() {
           contentContainerStyle={styles.grid}
         />
       </ScrollView>
-
-      {/* Barra de navegación inferior fija (Sticky Bottom Tab Bar) */}
-      <HomeFooter onPressHome={handleResetToHome} currentTab="inicio" />
     </SafeAreaView>
   );
 }
@@ -271,6 +264,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,

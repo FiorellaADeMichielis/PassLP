@@ -1,3 +1,4 @@
+import { ColorValue } from 'react-native';
 import Svg, {
   Circle,
   Line,
@@ -10,7 +11,7 @@ import Svg, {
 
 interface IconProps extends SvgProps {
   size?: number;
-  color?: string;
+  color?: ColorValue | string;
   strokeWidth?: number;
 }
 

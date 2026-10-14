@@ -11,16 +11,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HomeFooter } from '@/components/home/HomeFooter';
 import { AccountIcon, ChevronLeftIcon, TicketsIcon } from '@/components/ui/Icons';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/useAppTheme';
 
 /**
- * Pantalla estática de Mi Cuenta / Iniciar Sesión.
+ * Pantalla de Mi Cuenta / Iniciar Sesión.
  *
  * Accesible desde el botón "Ingresar" de la cabecera y desde la pestaña
- * "Cuenta" de la barra de navegación inferior.
+ * "Cuenta" de la barra de navegación inferior nativa.
  */
 export default function AccountScreen() {
   const router = useRouter();
@@ -140,6 +139,7 @@ export default function AccountScreen() {
           <Text
             style={[styles.description, { color: colors.textSecondary }]}
             maxFontSizeMultiplier={1.3}
+            selectable
           >
             Gestioná tus entradas adquiridas, consultá tus comprobantes de compra y administrá tus datos desde un solo lugar.
           </Text>
@@ -175,9 +175,6 @@ export default function AccountScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Barra de navegación inferior con pestaña Cuenta activa */}
-      <HomeFooter currentTab="cuenta" />
     </SafeAreaView>
   );
 }
@@ -293,4 +290,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
-
