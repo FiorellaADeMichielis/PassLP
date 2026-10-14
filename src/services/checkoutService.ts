@@ -1,5 +1,4 @@
 import { CartTicketItem, OrderPricing, ParkingVehicle } from '../types';
-import { formatCurrency } from '../utils/formatters';
 
 const SERVICE_FEE_RATE = 0.15; // 15% según referencia PASSLP
 
@@ -18,6 +17,5 @@ export const checkoutService = {
       total,
     };
   },
-
-  formatCurrency,
 };
+

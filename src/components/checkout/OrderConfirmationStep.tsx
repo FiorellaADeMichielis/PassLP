@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ShieldCheckIcon } from '../ui/Icons';
-import { checkoutService } from '@/services';
+import { formatCurrency } from '@/utils/formatters';
 import {
   AttendeeData,
   BuyerData,
@@ -145,7 +145,7 @@ export function OrderConfirmationStep({
               </Text>
             </View>
             <Text style={styles.itemPrice}>
-              {checkoutService.formatCurrency(t.subtotal)}
+              {formatCurrency(t.subtotal)}
             </Text>
           </View>
         ))}
@@ -160,7 +160,7 @@ export function OrderConfirmationStep({
               <Text style={styles.itemQuantity}>Patente: {v.plate}</Text>
             </View>
             <Text style={styles.itemPrice}>
-              {checkoutService.formatCurrency(v.price)}
+              {formatCurrency(v.price)}
             </Text>
           </View>
         ))}
@@ -171,7 +171,7 @@ export function OrderConfirmationStep({
         <View style={styles.costRow}>
           <Text style={styles.costLabel}>Costo del carrito</Text>
           <Text style={styles.costValue}>
-            {checkoutService.formatCurrency(cartCost)}
+            {formatCurrency(cartCost)}
           </Text>
         </View>
 
@@ -180,7 +180,7 @@ export function OrderConfirmationStep({
             Costo por servicio ({pricing.serviceFeePercentage}%)
           </Text>
           <Text style={styles.costValue}>
-            {checkoutService.formatCurrency(pricing.serviceFeeAmount)}
+            {formatCurrency(pricing.serviceFeeAmount)}
           </Text>
         </View>
 
@@ -189,7 +189,7 @@ export function OrderConfirmationStep({
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total estimado</Text>
           <Text style={styles.totalValue}>
-            {checkoutService.formatCurrency(pricing.total)}
+            {formatCurrency(pricing.total)}
           </Text>
         </View>
       </View>

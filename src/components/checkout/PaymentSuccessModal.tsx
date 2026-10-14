@@ -2,8 +2,8 @@ import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Palette } from '@/constants/theme';
 import { ShieldCheckIcon } from '../ui/Icons';
-import { checkoutService } from '@/services';
 import { Order } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 
 interface PaymentSuccessModalProps {
   visible: boolean;
@@ -63,7 +63,7 @@ export function PaymentSuccessModal({
             <View style={styles.receiptRow}>
               <Text style={styles.receiptLabel}>Total abonado:</Text>
               <Text style={styles.receiptTotal}>
-                {checkoutService.formatCurrency(order.pricing.total)}
+                {formatCurrency(order.pricing.total)}
               </Text>
             </View>
 

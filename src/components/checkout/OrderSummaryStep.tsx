@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ParkingBadgeIcon } from '../ui/Icons';
-import { checkoutService } from '@/services';
+import { formatCurrency } from '@/utils/formatters';
 import { CartTicketItem, EventItem, OrderPricing, ParkingVehicle } from '@/types';
 
 interface OrderSummaryStepProps {
@@ -59,7 +59,7 @@ export function OrderSummaryStep({
                 </Text>
               </View>
               <Text style={styles.ticketPrice}>
-                {checkoutService.formatCurrency(item.subtotal)}
+                {formatCurrency(item.subtotal)}
               </Text>
             </View>
           ))}
@@ -82,7 +82,7 @@ export function OrderSummaryStep({
                   <Text style={styles.vehiclePlate}>Patente: {v.plate}</Text>
                 </View>
                 <Text style={styles.vehiclePrice}>
-                  {checkoutService.formatCurrency(v.price)}
+                  {formatCurrency(v.price)}
                 </Text>
               </View>
             ))}
@@ -96,7 +96,7 @@ export function OrderSummaryStep({
           <View style={styles.costRow}>
             <Text style={styles.costLabel}>Costo de las entradas</Text>
             <Text style={styles.costValue}>
-              {checkoutService.formatCurrency(pricing.ticketsSubtotal)}
+              {formatCurrency(pricing.ticketsSubtotal)}
             </Text>
           </View>
 
@@ -104,7 +104,7 @@ export function OrderSummaryStep({
             <View style={styles.costRow}>
               <Text style={styles.costLabel}>Costo de estacionamiento</Text>
               <Text style={styles.costValue}>
-                {checkoutService.formatCurrency(pricing.parkingSubtotal)}
+                {formatCurrency(pricing.parkingSubtotal)}
               </Text>
             </View>
           )}
@@ -114,7 +114,7 @@ export function OrderSummaryStep({
               Costo por servicio ({pricing.serviceFeePercentage}%)
             </Text>
             <Text style={styles.costValue}>
-              {checkoutService.formatCurrency(pricing.serviceFeeAmount)}
+              {formatCurrency(pricing.serviceFeeAmount)}
             </Text>
           </View>
         </View>
@@ -125,7 +125,7 @@ export function OrderSummaryStep({
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>TOTAL</Text>
           <Text style={styles.totalValue}>
-            {checkoutService.formatCurrency(pricing.total)}
+            {formatCurrency(pricing.total)}
           </Text>
         </View>
       </View>
