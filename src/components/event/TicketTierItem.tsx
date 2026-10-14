@@ -86,7 +86,7 @@ export function TicketTierItem({
             accessibilityLabel={`Quitar una entrada de ${tier.name}`}
             accessibilityState={{ disabled: isMin }}
           >
-            <MinusIcon size={12} color={isMin ? '#666666' : '#FFFFFF'} />
+            <MinusIcon size={12} color={isMin ? Palette.textSecondary : Palette.white} />
           </TouchableOpacity>
 
           <Text style={styles.quantityText} maxFontSizeMultiplier={1.3}>
@@ -102,7 +102,7 @@ export function TicketTierItem({
             accessibilityLabel={`Agregar una entrada de ${tier.name}`}
             accessibilityState={{ disabled: isMax }}
           >
-            <PlusIcon size={12} color={isMax ? '#666666' : '#FFFFFF'} />
+            <PlusIcon size={12} color={isMax ? Palette.textSecondary : Palette.white} />
           </TouchableOpacity>
         </View>
 

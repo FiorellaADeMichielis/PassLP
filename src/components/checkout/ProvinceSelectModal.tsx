@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { CheckIcon } from '@/components/ui/Icons';
+import { Palette } from '@/constants/theme';
 import { ARGENTINE_PROVINCES } from '@/utils/validation';
 
 export interface ProvinceSelectModalProps {
@@ -65,7 +66,7 @@ export function ProvinceSelectModal({
                     {item}
                   </Text>
                   {isSelected && (
-                    <CheckIcon size={14} color="#1B9F00" strokeWidth={3} />
+                    <CheckIcon size={14} color={Palette.stepCurrent} strokeWidth={3} />
                   )}
                 </TouchableOpacity>
               );
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Palette.white,
     borderRadius: 16,
     width: '100%',
     maxHeight: '75%',
@@ -130,22 +131,23 @@ const styles = StyleSheet.create({
   },
   provinceText: {
     fontSize: 13.5,
-    color: '#332F2B',
+    color: Palette.charcoal,
   },
   provinceTextSelected: {
     fontWeight: '800',
-    color: '#1B9F00',
+    color: Palette.stepCurrent,
   },
   modalCloseButton: {
-    backgroundColor: '#332F2B',
+    backgroundColor: Palette.charcoal,
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 12,
   },
   modalCloseButtonText: {
-    color: '#FFFFFF',
+    color: Palette.white,
     fontWeight: '700',
     fontSize: 13,
   },
 });
+
