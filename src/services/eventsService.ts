@@ -9,7 +9,6 @@ function wait(ms: number): Promise<void> {
 
 export const eventsService = {
   async getEvents(category?: EventCategory, searchQuery?: string): Promise<EventItem[]> {
-    await wait(SIMULATED_DELAY_MS);
     let results = [...MOCK_EVENTS];
 
     if (category && category !== 'Todas') {

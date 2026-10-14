@@ -3,13 +3,15 @@ import { Image } from 'expo-image';
 import { useScrollToTop } from 'expo-router';
 import {
   ActivityIndicator,
-  Animated,
   FlatList,
   Keyboard,
+  LayoutAnimation,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
+  UIManager,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +24,13 @@ import { HomeHeader } from '@/components/home/HomeHeader';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { eventsService } from '@/services';
 import { EventCategory, EventItem } from '@/types';
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 // ─── Pantalla principal ────────────────────────────────────────────────────────
 
@@ -43,7 +52,6 @@ export default function HomeScreen() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
-  const [gridFadeAnim] = useState(() => new Animated.Value(1));
 
   // Soporte nativo para scroll to top al tocar la pestaña de Inicio
   useScrollToTop(scrollRef);
@@ -80,18 +88,11 @@ export default function HomeScreen() {
     bootstrap();
   }, []);
 
-  // ── Filtrado por búsqueda y categoría con transición suave ───────────────
+  // ── Filtrado por búsqueda y categoría con transición fluida ───────────────
   useEffect(() => {
     if (isInitialLoading) return;
 
     let cancel = false;
-
-    // Desvanecimiento suave inicial al cambiar filtro
-    Animated.timing(gridFadeAnim, {
-      toValue: 0.25,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
 
     async function applyFilters() {
       const filtered = await eventsService.getEvents(
@@ -100,13 +101,8 @@ export default function HomeScreen() {
       );
 
       if (!cancel) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setEvents(filtered);
-        // Transición suave de entrada con los nuevos datos
-        Animated.timing(gridFadeAnim, {
-          toValue: 1,
-          duration: 220,
-          useNativeDriver: true,
-        }).start();
       }
     }
 
@@ -115,7 +111,7 @@ export default function HomeScreen() {
     return () => {
       cancel = true;
     };
-  }, [debouncedQuery, selectedCategory, isInitialLoading, gridFadeAnim]);
+  }, [debouncedQuery, selectedCategory, isInitialLoading]);
 
   // ── Pull-to-refresh ──────────────────────────────────────────────────────
   async function handleRefresh() {
@@ -252,8 +248,8 @@ export default function HomeScreen() {
         {/* Título de sección */}
         <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Eventos</Text>
 
-        {/* Grilla de eventos con transición suave */}
-        <Animated.View style={{ opacity: gridFadeAnim }}>
+        {/* Grilla de eventos con transición fluida */}
+        <View>
           <FlatList
             data={events}
             keyExtractor={(item) => item.id}
@@ -264,7 +260,7 @@ export default function HomeScreen() {
             scrollEnabled={false}
             contentContainerStyle={styles.grid}
           />
-        </Animated.View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
