@@ -1,39 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import {
   Animated,
-  Dimensions,
-  FlatList,
   Platform,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
 import { EventItem } from '@/types';
-import {
-  calcularAjusteCircular,
-  calcularIndiceMedio,
-  obtenerListaCircular,
-  REPETICIONES_CARRUSEL_DEFAULT,
-} from '@/utils/carouselUtils';
 import { resolveFlyerSource } from '@/utils/imageUtils';
-
-// ─── Constantes de layout ─────────────────────────────────────────────────────
-const SCREEN_WIDTH = Dimensions.get('window').width;
-
-/** Ancho base de cada póster en el carrusel. */
-const ITEM_WIDTH = Math.round(SCREEN_WIDTH * 0.65);
-/** Espaciado entre pósteres. */
-const SPACING = 14;
-/** Intervalo de snap para centrar un póster en cada parada. */
-const SNAP_INTERVAL = ITEM_WIDTH + SPACING;
-/** Relleno lateral para que el primer y último elemento queden centrados. */
-const SIDE_SPACER = Math.round((SCREEN_WIDTH - ITEM_WIDTH) / 2);
-
-const CARD_RADIUS = 14;
-const SHADOW_COLOR = '#000000';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface FeaturedCarouselProps {
@@ -41,43 +19,27 @@ interface FeaturedCarouselProps {
   events: EventItem[];
 }
 
-type CarouselItem = EventItem & { virtualId: string; realIndex: number };
-
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 /**
- * Carrusel horizontal animado e infinito de eventos destacados.
+ * Carrusel horizontal animado de eventos destacados con centrado geométrico perfecto.
  *
- * Despliega los pósteres de manera circular continua: al alcanzar el último evento,
- * el primer evento se visualiza a continuación de forma natural sin rebobinar.
- * Interpola dinámicamente la escala y opacidad según el desplazamiento (scrollX),
- * destacando en grande el póster central y achicando los laterales.
+ * Muestra los eventos destacados en tarjetas con relación de aspecto 3:4.
+ * Cada póster activo se alinea exactamente en el centro horizontal de la pantalla
+ * con escala completa (1.0) y opacidad (1.0), mientras los laterales se reducen armónicamente.
  */
 export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const router = useRouter();
-  const listRef = useRef<FlatList<CarouselItem>>(null);
+  const { width: screenWidth } = useWindowDimensions();
+  const listRef = useRef<Animated.FlatList>(null);
+  const [scrollX] = useState(() => new Animated.Value(0));
 
-  const initialIndex = useMemo(
-    () => calcularIndiceMedio(events.length, REPETICIONES_CARRUSEL_DEFAULT),
-    [events.length]
-  );
-  const initialOffset = initialIndex * SNAP_INTERVAL;
-
-  const [scrollX] = useState(() => new Animated.Value(initialOffset));
-
-  const carouselData = useMemo(
-    () => obtenerListaCircular(events, REPETICIONES_CARRUSEL_DEFAULT),
-    [events]
-  );
-
-  useEffect(() => {
-    if (events.length > 1) {
-      listRef.current?.scrollToOffset({
-        offset: initialOffset,
-        animated: false,
-      });
-    }
-  }, [events.length, initialOffset]);
+  // Ancho del póster (72% del ancho visible de la pantalla)
+  const itemWidth = Math.round(screenWidth * 0.72);
+  const spacing = 14;
+  const snapInterval = itemWidth + spacing;
+  // Espaciador lateral para centrar perfectamente cada celda en el viewport
+  const sideSpacer = Math.round((screenWidth - snapInterval) / 2);
 
   if (events.length === 0) return null;
 
@@ -85,28 +47,22 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
     <View style={styles.container}>
       <Animated.FlatList
         ref={listRef}
-        data={carouselData}
-        keyExtractor={(item) => item.virtualId}
+        data={events}
+        keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        snapToInterval={SNAP_INTERVAL}
+        snapToInterval={snapInterval}
+        snapToAlignment="start"
         decelerationRate="fast"
+        disableIntervalMomentum={true}
         bounces={false}
-        removeClippedSubviews={false}
-        windowSize={7}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        initialScrollIndex={events.length > 1 ? initialIndex : undefined}
-        onScrollToIndexFailed={(info) => {
-          listRef.current?.scrollToOffset({
-            offset: info.index * SNAP_INTERVAL,
-            animated: false,
-          });
-        }}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingHorizontal: sideSpacer },
+        ]}
         getItemLayout={(_, index) => ({
-          length: SNAP_INTERVAL,
-          offset: SNAP_INTERVAL * index,
+          length: snapInterval,
+          offset: snapInterval * index,
           index,
         })}
         onScroll={Animated.event(
@@ -116,44 +72,39 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
         onMomentumScrollEnd={(e) => {
           if (events.length <= 1) return;
           const offsetX = e.nativeEvent.contentOffset.x;
-          const ajuste = calcularAjusteCircular(
-            offsetX,
-            SNAP_INTERVAL,
-            events.length,
-            REPETICIONES_CARRUSEL_DEFAULT
-          );
-          if (ajuste.necesitaAjuste) {
+          const currentIndex = Math.round(offsetX / snapInterval);
+          if (currentIndex >= events.length) {
             listRef.current?.scrollToOffset({
-              offset: ajuste.targetOffset,
-              animated: false,
+              offset: 0,
+              animated: true,
             });
           }
         }}
         scrollEventThrottle={16}
         renderItem={({ item, index }) => {
-          // Rango de entrada basado en la posición de este ítem
           const inputRange = [
-            (index - 1) * SNAP_INTERVAL,
-            index * SNAP_INTERVAL,
-            (index + 1) * SNAP_INTERVAL,
+            (index - 1) * snapInterval,
+            index * snapInterval,
+            (index + 1) * snapInterval,
           ];
 
-          // El ítem centrado tiene escala 1.0; al alejarse hacia los lados se achica a 0.82
+          // El ítem centrado tiene escala 1.0; los laterales se reducen suavemente a 0.85
           const scale = scrollX.interpolate({
             inputRange,
-            outputRange: [0.82, 1, 0.82],
+            outputRange: [0.85, 1, 0.85],
             extrapolate: 'clamp',
           });
 
-          // Reducción sutil de opacidad en los ítems laterales
+          // Opacidad sutil en los laterales
           const opacity = scrollX.interpolate({
             inputRange,
-            outputRange: [0.65, 1, 0.65],
+            outputRange: [0.7, 1, 0.7],
             extrapolate: 'clamp',
           });
 
           return (
             <TouchableOpacity
+              style={[styles.itemCell, { width: snapInterval }]}
               onPress={() => router.push({ pathname: '/event/[id]', params: { id: item.id } })}
               activeOpacity={0.9}
               accessibilityRole="button"
@@ -163,6 +114,8 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 style={[
                   styles.posterWrapper,
                   {
+                    width: itemWidth,
+                    height: Math.round(itemWidth * (4 / 3)),
                     backgroundColor: '#1E1B18',
                     transform: [{ scale }],
                     opacity,
@@ -175,6 +128,7 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   placeholderContentFit="contain"
                   style={styles.poster}
                   contentFit="cover"
+                  contentPosition="center"
                   transition={0}
                   cachePolicy="memory-disk"
                   priority="high"
@@ -191,21 +145,25 @@ export function FeaturedCarousel({ events }: FeaturedCarouselProps) {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 
+const CARD_RADIUS = 14;
+const SHADOW_COLOR = '#000000';
+
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
   },
   listContent: {
-    paddingHorizontal: SIDE_SPACER - SPACING / 2,
     alignItems: 'center',
   },
+  itemCell: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   posterWrapper: {
-    width: ITEM_WIDTH,
-    // Proporción 3:4
-    height: Math.round(ITEM_WIDTH * (4 / 3)),
-    marginHorizontal: SPACING / 2,
     borderRadius: CARD_RADIUS,
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
     // Sombra en iOS
     shadowColor: SHADOW_COLOR,
     shadowOffset: { width: 0, height: 6 },
